@@ -128,6 +128,8 @@ async def test_crossplane_tool_module_db_root_emits_broken(tmp_path: Path) -> No
     assert isinstance(report, dict)
     assert report["broken"] == ["FBIS-DLN01:Ctrl-EVR-01:Cmd"]
     assert "FBIS-DLN01:Ctrl-EVR-01:status" not in report["broken"]
+    # Cmd comes from a textentry widget (write role) → also surfaced through JSON as broken_write.
+    assert report["broken_write"] == ["FBIS-DLN01:Ctrl-EVR-01:Cmd"]
     assert report["ioc_db_resolved"] == 1
 
 
