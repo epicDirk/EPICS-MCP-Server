@@ -3,9 +3,11 @@
 Lokale Services in Docker, gelesen vom **read-only** `epics-pv`-MCP gegen echte Services — **ohne**
 ESS-Produktion (VPN-gated). ⚠️ **Netzwerk ehrlich:** die Docker-Ports binden **`0.0.0.0`/`[::]`**
 (WSL2-NAT-Erfordernis, s. „Netzwerk-Befund" unten) → die Sandbox-PVs sind im **LAN erreichbar** (für ein
-lokales Test-/Sim-IOC akzeptabel). Die **MCP-seitige** `127.0.0.1`-Isolation (addr-list) bleibt davon
-**unberührt** — der MCP erreicht ESS-Produktion NICHT. Zur **Laufzeit kein ESS-Kontakt** (nur der einmalige
-Image-Build zieht e3-Pakete, s. u.).
+lokales Test-/Sim-IOC akzeptabel). **Schreib-Asymmetrie ehrlich:** die 7 Readbacks tragen
+`field(ASG,"private")` (LAN-**lesbar**, am IOC read-only), aber die 2 ASG-DEFAULT-Records
+`Temp1ThrUpCrt-SP`/`CmdRst` sind von **jedem LAN-Host SCHREIBBAR** (`asCheckClientIP` filtert sie nicht).
+Die **MCP-seitige** `127.0.0.1`-Isolation (addr-list) bleibt davon **unberührt** — der MCP erreicht
+ESS-Produktion NICHT. Zur **Laufzeit kein ESS-Kontakt** (nur der einmalige Image-Build zieht e3-Pakete, s. u.).
 
 ## Komponenten
 
@@ -66,8 +68,15 @@ stdio-MCP liest Env **nur beim Start** → wirkt erst im **neuen Claude-Fenster*
 |---|---|
 | `EPICS_MCP_PROVIDER` | `pva` |
 | `EPICS_PVA_NAME_SERVERS` | `127.0.0.1:5075` |
+| `EPICS_MCP_ALLOW_PV_WRITE` | `true` (scoped Write-Ausnahme — s. u.) |
+| `EPICS_MCP_PV_WRITE_PATTERN` | `^FBIS-DLN01:Ctrl-EVR-01:(Temp1ThrUpCrt-SP\|CmdRst)$` |
 
 > ⚠️ `provider` ist EXKLUSIV (ca↔pva) → betrifft alle Fenster beim nächsten epics-pv-Start (Dirk OK 2026-06-28).
+>
+> ⚠️ **Scoped Write-Ausnahme:** `set_pv_value` ist NUR für die 2 Schreibziele `Temp1ThrUpCrt-SP`/`CmdRst`
+> freigeschaltet (Regex-Allowlist + Rate-Limit + Audit; `ASG(private)` schützt die 7 Readbacks am IOC).
+> **Default überall sonst bleibt read-only/write-gated.** Allowlist und `.db`-ASG-Verteilung sind
+> deckungsgleich gepinnt durch `tests/test_sandbox_db_asg.py`.
 
 ## Verifikation
 
@@ -75,7 +84,7 @@ stdio-MCP liest Env **nur beim Start** → wirkt erst im **neuen Claude-Fenster*
   `EPICS_PVA_NAME_SERVERS=127.0.0.1:5075`), dann im MCP-venv
   `python -c "import asyncio; from epics_pv_mcp.services.epics_client import pv_get; print(asyncio.run(pv_get('FBIS-DLN01:Ctrl-EVR-01:12VValue')))"`
   → `value: 12.0` + NT display (units V).
-- **Regression:** `EPICS_SANDBOX=1 EPICS_MCP_PROVIDER=pva EPICS_PVA_NAME_SERVERS=127.0.0.1:5075 uv run pytest -m live`.
+- **Regression:** `EPICS_SANDBOX=1 EPICS_MCP_PROVIDER=pva EPICS_PVA_NAME_SERVERS=127.0.0.1:5075 EPICS_PVA_AUTO_ADDR_LIST=NO EPICS_PVA_ADDR_LIST=127.0.0.1 uv run pytest -m live`.
 - **Finale MCP-Tool-DoD (frisches Fenster):** `mcp__epics-pv__get_pv_value("FBIS-DLN01:Ctrl-EVR-01:12VValue")`;
   nach Phase B `find_channels(...)` / `find_device(...)`.
 
