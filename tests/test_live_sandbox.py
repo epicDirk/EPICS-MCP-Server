@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import os
 import time
+from pathlib import Path
 
 import pytest
 
@@ -142,3 +143,56 @@ def test_find_channels_no_seed() -> None:
         f"iocName={channels[0]['ioc_name']!r}, erwartet {_EXPECTED_IOC!r} — "
         "sendet der reccaster IOCNAME?"
     )
+
+
+@pytest.mark.skipif(_NO_CF, reason=_SKIP_CF_REASON)
+async def test_cf_unregistered_w1_mechanism(tmp_path: Path) -> None:
+    """W1: das cf_unregistered-Mechanismus-Urteil gegen die LIVE ChannelFinder (9-Record-Sandbox).
+
+    Ein winziges synthetisches Display referenziert zwei BEDIENTE Records (12VValue/3V3Value, in CF
+    registriert) und ein referenziertes-aber-unbedientes EVR-Register (DlyGen0Prescaler-SP — ein
+    echtes mTCA-EVR-300-Register, das die fbis-Displays nutzen, das Spielzeug-IOC aber nicht
+    bedient). Assertiert: die bedienten sind NICHT cf_unregistered, das unbediente IST es — die
+    exakte Subset-Membership, die die Headline 645/650 nur im Maßstab (vollständiges CF) belegt.
+    Schnell + deterministisch (winziges Inventar, ein CF-GET); KEINE 60-s-fbis-Walk.
+    """
+    _reset_epics_singletons()
+    from epics_pv_mcp.tools.crossplane import _crossplane_check
+
+    prefix = "FBIS-DLN01:Ctrl-EVR-01:"
+    served_a = f"{prefix}12VValue"
+    served_b = f"{prefix}3V3Value"
+    unserved = f"{prefix}DlyGen0Prescaler-SP"
+
+    displays = tmp_path / "displays"
+    displays.mkdir()
+    (displays / "w1.bob").write_text(
+        '<display version="2.0.0"><name>W1</name>'
+        f"<macros><P>{prefix}</P></macros>"
+        '<widget type="textupdate"><name>a</name><pv_name>$(P)12VValue</pv_name></widget>'
+        '<widget type="textupdate"><name>b</name><pv_name>$(P)3V3Value</pv_name></widget>'
+        '<widget type="textentry"><name>u</name>'
+        "<pv_name>$(P)DlyGen0Prescaler-SP</pv_name></widget></display>",
+        encoding="utf-8",
+    )
+    st_cmd = tmp_path / "st.cmd"
+    st_cmd.write_text(
+        f'epicsEnvSet("P", "{prefix}")\ndbLoadRecords("evr.db", "P=$(P)")\n', encoding="utf-8"
+    )
+
+    result = await _crossplane_check(str(displays), str(st_cmd), query_channelfinder=True)
+    report = result["report"]
+    assert isinstance(report, dict)
+    # Der CF-Query lief wirklich (URL für die Live-Lane gesetzt) — keine "skipped"-Note.
+    assert not any("cf_unregistered skipped" in note for note in report["notes"]), (
+        "EPICS_MCP_CHANNELFINDER_URL nicht gesetzt — der CF-Check wurde übersprungen."
+    )
+    cf_unregistered = report["cf_unregistered"]
+    assert isinstance(cf_unregistered, list)
+    assert unserved in cf_unregistered, (
+        f"{unserved} sollte cf_unregistered sein (referenziert, in linked, nicht unter den 9 "
+        f"bedienten CF-Kanälen); bekam {cf_unregistered}"
+    )
+    assert served_a not in cf_unregistered  # bedient + in CF registriert
+    assert served_b not in cf_unregistered
+    assert report["cf_registered"] >= 5  # CF hält den 9-Record-Gerätesatz unter diesem Prefix
