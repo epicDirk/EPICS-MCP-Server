@@ -1,0 +1,108 @@
+# Lokales e3-Test-IOC — Gerät FBIS-DLN01:Ctrl-EVR-01 (Event Receiver).
+#
+# KEIN Komitee-Artefakt, KEIN echtes mrfioc2-IOC: in Produktion liefert das mrfioc2-Modul diese
+# EVR-PVs; hier sind es Soft-/Sim-Records mit ESS-Namenskonvention (Sec-Sub:Dis-Dev-Idx:Signal),
+# damit der read-only epics-pv-MCP echte Live-PVs auf 127.0.0.1 testen kann (get_pv_value/find_device/
+# validate_pvs/crossplane_check/find_channels). Signal-Namen aus dem BIS-Dataset (EVR-AMC slot2)
+# abgeleitet — 9 Records: 2 mbbi / 1 bi / 3 ai / 1 ao / 1 calc / 1 bo.
+#
+# Prefix per Makro:  dbLoadRecords("fbis-dln01-evr.db", "P=FBIS-DLN01:Ctrl-EVR-01:")
+#   -> $(P)BMod = FBIS-DLN01:Ctrl-EVR-01:BMod  usw.
+# Deterministische VAL+PINI für reproduzierbare Tests/DoD.
+# access-security: die 7 Readbacks tragen field(ASG,"private") (= nur READ via QSRV2/PVA aus der
+# geladenen configuration.acf); nur die 2 Schreibziele (Temp1ThrUpCrt-SP, CmdRst) bleiben auf
+# ASG(DEFAULT) = beschreibbar.
+
+# ---- Enums (mbbi -> NTEnum: index + choices) ----------------------------------------------
+record(mbbi, "$(P)BMod") {
+    field(DESC, "Beam mode")
+    field(ZRST, "No Beam")    field(ZRVL, "0")
+    field(ONST, "Probe")      field(ONVL, "1")
+    field(TWST, "Fast Tuning") field(TWVL, "2")
+    field(THST, "Production")  field(THVL, "3")
+    field(VAL,  "3")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(mbbi, "$(P)BDest") {
+    field(DESC, "Beam destination")
+    field(ZRST, "Dump")    field(ZRVL, "0")
+    field(ONST, "Target")  field(ONVL, "1")
+    field(TWST, "LEBT-FC") field(TWVL, "2")
+    field(VAL,  "1")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+# ---- Binary status (bi) -------------------------------------------------------------------
+record(bi, "$(P)DbufBInhSwFBIS-Sts") {
+    field(DESC, "Databuf inhibit switch FBIS status")
+    field(ZNAM, "Inhibited") field(ZSV, "MAJOR")
+    field(ONAM, "OK")        field(OSV, "NO_ALARM")
+    field(VAL,  "1")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+# ---- Analog readbacks (ai -> NT display + valueAlarm) -------------------------------------
+record(ai, "$(P)Temp1Value") {
+    field(DESC, "AMC temperature 1")
+    field(EGU,  "degC") field(PREC, "1")
+    field(HOPR, "85")   field(LOPR, "0")
+    field(HIGH, "70")   field(HSV,  "MINOR")
+    field(HIHI, "80")   field(HHSV, "MAJOR")
+    field(VAL,  "42.5")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)12VValue") {
+    field(DESC, "12V rail")
+    field(EGU,  "V") field(PREC, "2")
+    field(HOPR, "13") field(LOPR, "11")
+    field(LOW,  "11.4") field(LSV,  "MINOR")
+    field(LOLO, "10.8") field(LLSV, "MAJOR")
+    field(VAL,  "12.0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)3V3Value") {
+    field(DESC, "3.3V rail")
+    field(EGU,  "V") field(PREC, "2")
+    field(HOPR, "3.6") field(LOPR, "3.0")
+    field(VAL,  "3.30")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+# ---- Setpoint (ao -> NT control: DRVH/DRVL) — Schreibziel, ASG(DEFAULT) ------------------
+record(ao, "$(P)Temp1ThrUpCrt-SP") {
+    field(DESC, "Temp1 upper-critical threshold setpoint")
+    field(EGU,  "degC") field(PREC, "1")
+    field(DRVH, "120")  field(DRVL, "0")
+    field(HOPR, "120")  field(LOPR, "0")
+    field(VAL,  "80")
+    field(PINI, "YES")
+}
+
+# ---- Counter (calc -> changing value: entriegelt monitor_pv / Live-Diagnose-Tests) -------
+record(calc, "$(P)EvtACnt-I") {
+    field(DESC, "Event counter A (sim, increments)")
+    field(SCAN, "1 second")
+    field(CALC, "(A+1)%1000")
+    field(INPA, "$(P)EvtACnt-I NPP")
+    field(EGU,  "counts")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+# ---- Command (bo, momentary) — Schreibziel, ASG(DEFAULT) ---------------------------------
+record(bo, "$(P)CmdRst") {
+    field(DESC, "Reset command")
+    field(ZNAM, "Idle")
+    field(ONAM, "Reset")
+    field(VAL,  "0")
+    field(PINI, "YES")
+}

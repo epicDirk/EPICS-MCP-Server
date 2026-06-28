@@ -1,0 +1,32 @@
+# Lokale EPICS-Service-Sandbox.
+#
+# Milestone 0: `test-ioc` = echtes e3-IOC (require essioc) FBIS-DLN01:Ctrl-EVR-01, lokal gebaut aus
+# dem ESS-conda-Channel (sandbox/ioc-e3/Dockerfile). Liefert echte Live-PVs (CA+PVA, QSRV2) auf 127.0.0.1.
+# Phase B (elasticsearch + channelfinder) wird nach dem M0-Checkpoint ergänzt.
+#
+# IOC-Image einmalig bauen (via Host-Proxy, nur Build-Zeit; Laufzeit 100% offline):
+#   docker build --build-arg HTTPS_PROXY=http://host.docker.internal:8899 \
+#     --build-arg HTTP_PROXY=http://host.docker.internal:8899 \
+#     -t epics-sandbox-e3-ioc:7.0.9 -f sandbox/ioc-e3/Dockerfile sandbox/ioc-e3
+# Start:  docker compose -f sandbox/docker-compose.yml up -d test-ioc
+# Stop:   docker compose -f sandbox/docker-compose.yml down
+# ⚠️ Container-Lifecycle (up/down) nur mit Dirks OK; vorher `docker ps` frisch (Multi-Window).
+
+services:
+  test-ioc:
+    image: epics-sandbox-e3-ioc:7.0.9
+    container_name: epics-sandbox-test-ioc
+    # ENTRYPOINT (im Image) = conda run -n base iocsh st.cmd ; WORKDIR /iocs/test-evr.
+    # Mount = Iteration an st.cmd/.db ohne Rebuild (rw: autosave/common_config kann später schreiben).
+    volumes:
+      - ./ioc-e3:/iocs/test-evr
+    # iocsh liest stdin; ohne (pseudo-)TTY bekäme es EOF und der Container endete.
+    stdin_open: true
+    tty: true
+    ports:
+      # 0.0.0.0-Bind (NIE "127.0.0.1:") — sonst erreicht der native Windows-MCP den Port auf WSL2 nicht.
+      - "5064:5064"       # CA server TCP + name-server-TCP
+      - "5064:5064/udp"   # CA search UDP
+      - "5065:5065/udp"   # CA beacon UDP
+      - "5075:5075"       # PVA TCP + name-server-TCP (der funktionierende Pfad host->container)
+    restart: "no"
