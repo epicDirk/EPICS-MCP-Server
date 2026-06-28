@@ -36,7 +36,9 @@ services:
   # (elastic.co / GHCR), Laufzeit 127.0.0.1-lokal. demo_auth-/cf.ldif-Creds = Test-Creds, NIE Produktion.
   # test-ioc bleibt UNANGETASTET (eigenes Netz channelfinder-net; der recsync-Join folgt erst in M2).
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.0
+    # Digest-gepinnt (reproduzierbarer Pull): Tag + @sha256 des verifiziert laufenden Images
+    # (docker inspect --format '{{index .RepoDigests 0}}' …:8.18.0). Tag bleibt zur Lesbarkeit.
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.0@sha256:70b37a809f04cd86e14460f959ff33c272a38f24268eee8b913c2cc73ac86c88
     container_name: cf-elasticsearch
     networks: [channelfinder-net]
     environment:
@@ -59,13 +61,14 @@ services:
     restart: "no"
 
   channelfinder:
-    image: ghcr.io/channelfinder/channelfinderservice:ChannelFinder-5.1.0
+    # Digest-gepinnt (reproduzierbarer Pull): Tag + @sha256 des verifiziert laufenden Images.
+    image: ghcr.io/channelfinder/channelfinderservice:ChannelFinder-5.1.0@sha256:b9fc4276c89ea723030b80c8d475f0078731595df9a952adfc1773eea0ccd822
     container_name: cf-channelfinder
     networks: [channelfinder-net]
     environment:
-      # CF↔ES container-to-container. Beide Varianten gesetzt (deprecated network.host + bevorzugte host_urls),
-      # damit CF die ES bei 5.1.0 sicher findet — bei Connect-Fehler im `logs channelfinder` gegenprüfen.
-      ELASTICSEARCH_NETWORK_HOST: elasticsearch
+      # CF↔ES container-to-container: host_urls genügt. network.host ist deprecated und wird von CF 5.1.0
+      # ignoriert (Log: "Only one of elasticsearch.host_urls and network.host can be set, ignoring
+      # elasticsearch.network.host") — darum hier NICHT gesetzt. Bei Connect-Fehler `logs channelfinder`.
       ELASTICSEARCH_HOST_URLS: http://elasticsearch:9200
       # KEIN context-path-Env: CF 5.1.0 mappt seine Controller bereits NATIV unter /ChannelFinder/resources/...
       # (empirisch verifiziert — ein zusätzliches SERVER_SERVLET_CONTEXT_PATH verdoppelt zu /ChannelFinder/ChannelFinder).
