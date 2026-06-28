@@ -28,8 +28,10 @@ import requests
 
 CF_URL = os.getenv("CF_URL", "http://localhost:8080/ChannelFinder").rstrip("/")
 CF_USER = os.getenv("CF_ADMIN_USER", "admin")
-# cf.ldif-Default — gegen das konkrete CF-Image bestätigen (Phase-B-Step):
-CF_PASS = os.getenv("CF_ADMIN_PASS", "1234")
+# demo_auth ist die am Upstream-CF-5.1.0-Image AKTIVE Auth (application.properties:
+# embedded_ldap.enabled=false, demo_auth.users=admin / pwds=adminPass). Die cf.ldif-Creds admin/1234
+# gehören zur DEAKTIVIERTEN embedded-LDAP-Variante (= ESS-Prod). Per Env überschreibbar.
+CF_PASS = os.getenv("CF_ADMIN_PASS", "adminPass")
 CF_OWNER = os.getenv("CF_OWNER", "admin")
 TIMEOUT = 10.0
 

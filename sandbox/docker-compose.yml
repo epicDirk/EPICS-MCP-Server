@@ -30,3 +30,58 @@ services:
       - "5065:5065/udp"   # CA beacon UDP
       - "5075:5075"       # PVA TCP + name-server-TCP (der funktionierende Pfad host->container)
     restart: "no"
+
+  # --- Phase B / M1: ChannelFinder + Elasticsearch ---------------------------------------------
+  # Shape = ESS ics-software/channelfinderservice/compose.yml (Tag ChannelFinder-5.1.0); Images anon
+  # (elastic.co / GHCR), Laufzeit 127.0.0.1-lokal. demo_auth-/cf.ldif-Creds = Test-Creds, NIE Produktion.
+  # test-ioc bleibt UNANGETASTET (eigenes Netz channelfinder-net; der recsync-Join folgt erst in M2).
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.0
+    container_name: cf-elasticsearch
+    networks: [channelfinder-net]
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      cluster.name: channelfinder
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+      # bootstrap.memory_lock bewusst NICHT gesetzt (bräuchte ulimits memlock=-1); vm.max_map_count ist ok.
+    mem_limit: 2g
+    volumes:
+      - cf-es-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 60s
+    ports:
+      - "9200:9200"       # nur Debug
+    restart: "no"
+
+  channelfinder:
+    image: ghcr.io/channelfinder/channelfinderservice:ChannelFinder-5.1.0
+    container_name: cf-channelfinder
+    networks: [channelfinder-net]
+    environment:
+      # CF↔ES container-to-container. Beide Varianten gesetzt (deprecated network.host + bevorzugte host_urls),
+      # damit CF die ES bei 5.1.0 sicher findet — bei Connect-Fehler im `logs channelfinder` gegenprüfen.
+      ELASTICSEARCH_NETWORK_HOST: elasticsearch
+      ELASTICSEARCH_HOST_URLS: http://elasticsearch:9200
+      # KEIN context-path-Env: CF 5.1.0 mappt seine Controller bereits NATIV unter /ChannelFinder/resources/...
+      # (empirisch verifiziert — ein zusätzliches SERVER_SERVLET_CONTEXT_PATH verdoppelt zu /ChannelFinder/ChannelFinder).
+      # → Endpunkte liegen out-of-the-box auf /ChannelFinder/resources/channels = matcht Seed/Test/.mcp.json-Defaults.
+    mem_limit: 1g
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    restart: "no"
+
+volumes:
+  cf-es-data:
+    driver: local
+
+networks:
+  channelfinder-net:
+    driver: bridge

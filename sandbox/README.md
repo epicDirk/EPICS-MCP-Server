@@ -14,8 +14,24 @@ ESS-Produktion NICHT. Zur **Laufzeit kein ESS-Kontakt** (nur der einmalige Image
 | Service | Was | Ports (host) |
 |---|---|---|
 | **`test-ioc`** | echtes **e3-IOC** (`require essioc`), Gerät `FBIS-DLN01:Ctrl-EVR-01`, serviert die `.db` über CA+PVA (QSRV2) | 5064/5065 (CA), 5075 (PVA) |
-| `elasticsearch` (**Phase B, geplant**) | Backend für ChannelFinder | 9200 |
-| `channelfinder` + `recceiver` (**Phase B, geplant**) | PV-Verzeichnis; reccaster (in essioc) → recceiver → CF (Auto-Populate, container-to-container) | 8080 |
+| **`elasticsearch`** (**Phase B / M1 — da**) | Backend für ChannelFinder (`:8.18.0`, single-node, xpack-security off) | 9200 |
+| **`channelfinder`** (**Phase B / M1 — da**) | PV-Verzeichnis (REST), `ghcr.io/channelfinder/channelfinderservice:ChannelFinder-5.1.0`; API nativ unter `/ChannelFinder/resources/…` | 8080 |
+| `recceiver` (**Phase B / M2 — offen**) | reccaster (in essioc, lauscht) → recceiver-Broadcast → CF (echtes Auto-Populate, container-to-container) | 5049/udp |
+
+### ChannelFinder hochfahren (M1 — Seed-first)
+
+```powershell
+docker ps                                                                       # frisch prüfen (Multi-Window!)
+docker compose -f sandbox/docker-compose.yml up -d elasticsearch channelfinder  # ES + CF (eigenes Netz; test-ioc unberührt)
+curl -fs "http://localhost:8080/ChannelFinder/resources/channels?~name=*"        # erwartet: []  (CF up, API nativ /ChannelFinder)
+EPICS-MCP-Server\.venv\Scripts\python.exe sandbox/seed/seed_channelfinder.py     # Fallback-Seed (bis M2 reccaster auto-populiert)
+```
+
+**Auth (am CF-5.1.0-Image aktiv = `demo_auth`, NIE Produktion):** `admin/adminPass` (Schreiben/Seed); Lesen
+braucht keine Auth. Die cf.ldif-Creds `admin/1234` gehören zur *deaktivierten* embedded-LDAP-Variante (ESS-Prod).
+**Context-Path:** CF 5.1.0 mappt nativ unter `/ChannelFinder` → **kein** `SERVER_SERVLET_CONTEXT_PATH`-Env setzen
+(verdoppelt sonst zu `/ChannelFinder/ChannelFinder`). MCP-Aktivierung: `EPICS_MCP_CHANNELFINDER_URL=http://localhost:8080/ChannelFinder`
+(s. Tabelle unten; wirkt erst im neuen Fenster).
 
 ## Das e3-Test-IOC (`ioc-e3/`)
 
