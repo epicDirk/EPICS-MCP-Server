@@ -16,6 +16,15 @@ services:
   test-ioc:
     image: epics-sandbox-e3-ioc:7.0.9
     container_name: epics-sandbox-test-ioc
+    # Phase B / M2: dem recceiver auf der gemeinsamen channelfinder-net-Bridge beitreten, damit der
+    # reccaster dessen UDP-Announce empfängt. hostname: → reccaster meldet HOSTNAME=epics-sandbox-test-ioc
+    # als CF-hostName (statt der Container-IP via cfstore-Fallback).
+    # ⚠ Blast-Radius (QA): das erste `compose up` recreated NICHT nur test-ioc (Netz-Join), sondern auch
+    # cf-channelfinder (neuer Healthcheck) + ggf. elasticsearch (SCHRITT-0-@sha256-Pin). ES/CF-Daten
+    # überleben (cf-es-data-Volume, ~60 s CF-Neustart). Gegated: PVA-5075-Smoke davor/danach
+    # (Port-Publishing 5075 überlebt den Netz-Wechsel).
+    hostname: epics-sandbox-test-ioc
+    networks: [channelfinder-net]
     # ENTRYPOINT (im Image) = conda run -n base iocsh st.cmd ; WORKDIR /iocs/test-evr.
     # Mount = Iteration an st.cmd/.db ohne Rebuild (rw: autosave/common_config kann später schreiben).
     volumes:
@@ -77,8 +86,39 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
+    healthcheck:
+      # CF-Image (Ubuntu 26.04) hat WEDER curl NOCH wget NOCH python — nur bash. Darum Port-Readiness
+      # via bash /dev/tcp: Spring Boot bindet 8080 erst am Ende des Startups → Port-offen ≈ App-bereit.
+      # (Ein tieferer HTTP-200-Check entfällt mangels HTTP-Client; der recceiver toleriert ein noch
+      # nicht ES-verbundenes CF ohnehin via twisted-Retry im cfstore.)
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
     ports:
       - "8080:8080"
+    restart: "no"
+
+  # --- Phase B / M2: recceiver (essioc → reccaster → recceiver → ChannelFinder Auto-Populate) ------
+  # Vanilla recsync 1.8 (sandbox/recceiver/Dockerfile, OHNE ESS-Patches). Empfängt die reccaster-
+  # Records des test-ioc über die gemeinsame channelfinder-net-Bridge und schreibt sie via
+  # channelfinderapi.conf nach CF. Kein veröffentlichter Port nötig (Announce-Broadcast + der
+  # TCP-connect-back des reccasters sind container-intern auf der Bridge).
+  recceiver:
+    build:
+      context: ./recceiver
+      # Proxy aus dem Host-Env durchreichen (leer = kein Proxy), damit `compose build recceiver` bei
+      # geblocktem Egress den Host-CONNECT-Proxy nutzt — ohne manuelles `docker build --build-arg`.
+      args:
+        HTTPS_PROXY: "${HTTPS_PROXY:-}"
+        HTTP_PROXY: "${HTTP_PROXY:-}"
+    container_name: recsync-recceiver
+    networks: [channelfinder-net]
+    depends_on:
+      channelfinder:
+        condition: service_healthy
+    mem_limit: 256m
     restart: "no"
 
 volumes:

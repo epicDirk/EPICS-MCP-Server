@@ -16,7 +16,7 @@ ESS-Produktion NICHT. Zur **Laufzeit kein ESS-Kontakt** (nur der einmalige Image
 | **`test-ioc`** | echtes **e3-IOC** (`require essioc`), Gerät `FBIS-DLN01:Ctrl-EVR-01`, serviert die `.db` über CA+PVA (QSRV2) | 5064/5065 (CA), 5075 (PVA) |
 | **`elasticsearch`** (**Phase B / M1 — da**) | Backend für ChannelFinder (`:8.18.0`, single-node, xpack-security off) | 9200 |
 | **`channelfinder`** (**Phase B / M1 — da**) | PV-Verzeichnis (REST), `ghcr.io/channelfinder/channelfinderservice:ChannelFinder-5.1.0`; API nativ unter `/ChannelFinder/resources/…` | 8080 |
-| `recceiver` (**Phase B / M2 — offen**) | reccaster (in essioc, lauscht) → recceiver-Broadcast → CF (echtes Auto-Populate, container-to-container) | 5049/udp |
+| **`recceiver`** (**Phase B / M2 — LIVE**) | vanilla recsync 1.8 (ohne Patches); empfängt die reccaster-Records des `test-ioc` → schreibt sie auto nach CF (essioc→reccaster→recceiver→CF) | — (container-intern, UDP 5049) |
 
 ### ChannelFinder hochfahren (M1 — Seed-first)
 
@@ -24,7 +24,7 @@ ESS-Produktion NICHT. Zur **Laufzeit kein ESS-Kontakt** (nur der einmalige Image
 docker ps                                                                       # frisch prüfen (Multi-Window!)
 docker compose -f sandbox/docker-compose.yml up -d elasticsearch channelfinder  # ES + CF (eigenes Netz; test-ioc unberührt)
 curl -fs "http://localhost:8080/ChannelFinder/resources/channels?~name=*"        # erwartet: []  (CF up, API nativ /ChannelFinder)
-EPICS-MCP-Server\.venv\Scripts\python.exe sandbox/seed/seed_channelfinder.py     # Fallback-Seed (bis M2 reccaster auto-populiert)
+EPICS-MCP-Server\.venv\Scripts\python.exe sandbox/seed/seed_channelfinder.py     # Fallback-Seed (M2 auto-populiert jetzt live; Seed = Fallback)
 ```
 
 **Auth (am CF-5.1.0-Image aktiv = `demo_auth`, NIE Produktion):** `admin/adminPass` (Schreiben/Seed); Lesen
@@ -32,6 +32,39 @@ braucht keine Auth. Die cf.ldif-Creds `admin/1234` gehören zur *deaktivierten* 
 **Context-Path:** CF 5.1.0 mappt nativ unter `/ChannelFinder` → **kein** `SERVER_SERVLET_CONTEXT_PATH`-Env setzen
 (verdoppelt sonst zu `/ChannelFinder/ChannelFinder`). MCP-Aktivierung: `EPICS_MCP_CHANNELFINDER_URL=http://localhost:8080/ChannelFinder`
 (s. Tabelle unten; wirkt erst im neuen Fenster).
+
+### M2 — echtes Auto-Populate (reccaster → recceiver → ChannelFinder)
+
+Statt zu seeden schreibt der **recceiver** die Records des IOC automatisch nach CF: der `essioc`-**reccaster**
+im `test-ioc` lauscht auf `0.0.0.0:5049`; der **recceiver** (`sandbox/recceiver/`, **vanilla recsync 1.8 ohne
+Patches**) sendet alle 15 s einen UDP-Broadcast (`255.255.255.255:5049`, subnetz-unabhängig); der reccaster
+verbindet sich per UDP-Quell-IP zurück und überträgt seine Records. Die CF-Verbindung kommt aus
+**`channelfinderapi.conf`** (`[DEFAULT] BaseURL=http://channelfinder:8080/ChannelFinder`, `admin/adminPass`) —
+recsync-`cfstore` ruft `ChannelFinderClient()` ohne Args, pyCFClient (v3.0.0) liest die conf aus `/etc` ODER dem
+cwd. `docker.conf` `[cf]` setzt alias/recordType/recordDesc + `cleanOnStart` + festen `recceiverId=recsync-sandbox`
+(so inaktiviert das Clean NUR die recceiver-eigenen Kanäle; die admin-geseedeten M1-Kanäle bleiben unberührt).
+
+**recceiver bauen + starten (gegated — Container-Lifecycle, vorher `docker ps`):**
+
+```powershell
+docker compose -f sandbox/docker-compose.yml build recceiver   # Egress github.com+pypi.org (direkt; bei Block:
+                                                               # HTTPS_PROXY/HTTP_PROXY-Env → build.args, wie ioc-e3)
+# Minimaler Blast-Radius (CF/ES laufen lassen): nur test-ioc dem Netz beitreten + recceiver gegen das laufende CF:
+docker compose -f sandbox/docker-compose.yml up -d --no-deps --force-recreate test-ioc   # ⚠ PVA-5075-Smoke davor/danach!
+docker compose -f sandbox/docker-compose.yml up -d --no-deps recceiver
+```
+
+> ⚠️ Der `test-ioc`-Recreate (Netz-Join) trägt **PVA-5075** (alle 12 epics-pv-Tools) → davor/danach
+> `get_pv_value("FBIS-DLN01:Ctrl-EVR-01:12VValue")` smoke-testen; bei kaputtem PVA `test-ioc` ohne `networks:`
+> zurückrollen (Port-Publishing 5075 überlebt den Netz-Wechsel — verifiziert). Ein **voller** `compose up`
+> würde zusätzlich cf-channelfinder (Healthcheck) + ggf. elasticsearch (@sha256-Pin) recreaten — der
+> `--no-deps`-Weg vermeidet das.
+
+**Verifikation (live bestätigt 2026-06-28):** recceiver-Log zeigt `CF_COMMIT` + `Total channels to update: 130`;
+reccaster `RecSync-State-Sts` läuft bis **`Done`**; ein **NIE geseedetes** Record (`3V3Value`) liegt mit
+`iocName=FBIS-DLN01-Ctrl-EVR-01`/`hostName=epics-sandbox-test-ioc`/`pvStatus=Active` in CF (kein Seed-Lauf). Test:
+`EPICS_SANDBOX_RECSYNC=1` (+ `EPICS_SANDBOX=1 EPICS_SANDBOX_CF=1` + PVA-Env) → `test_find_channels_no_seed`.
+**Seed (`seed_channelfinder.py`) bleibt als Fallback**, falls die Netzwerk-Kette mal nicht steht.
 
 ## Das e3-Test-IOC (`ioc-e3/`)
 
