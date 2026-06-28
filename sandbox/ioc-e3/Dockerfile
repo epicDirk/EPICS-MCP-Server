@@ -5,8 +5,9 @@
 #   --build-arg HTTPS_PROXY=http://host.docker.internal:8899 \
 #   --build-arg HTTP_PROXY=http://host.docker.internal:8899 \
 #   -t epics-sandbox-e3-ioc:7.0.9 -f sandbox/ioc-e3/Dockerfile sandbox/ioc-e3
-# Base-Image per Digest gepinnt (reproduzierbar — der :7.0.9-Tag soll denselben Inhalt bauen).
-# Digest auflösen: docker image inspect condaforge/miniforge3:latest --format '{{index .RepoDigests 0}}'
+# Base-Image per Digest gepinnt (schlägt das bewegliche :latest-Tag fest). Digest auffrischen:
+# docker image inspect condaforge/miniforge3:latest --format '{{index .RepoDigests 0}}' (= ein
+# bewegliches Tag — beim Auffrischen den dann gültigen miniforge3-Release notieren).
 FROM condaforge/miniforge3@sha256:7de9956cd783d48955835e61b8d212c26b2df901d5a5be8217bd58fb6c1bd5a4
 
 # Proxy NUR für den conda-Install-Layer (Build-ARG). conda zieht damit die e3-Pakete aus dem
@@ -14,10 +15,10 @@ FROM condaforge/miniforge3@sha256:7de9956cd783d48955835e61b8d212c26b2df901d5a5be
 ARG HTTPS_PROXY=""
 ARG HTTP_PROXY=""
 
-# Versions-Pins (gemessen) für reproduzierbaren Build; channel_alias wird NACH dem Install wieder
-# entfernt, damit das weitergegebene Image keine latente ESS-Artifactory-Referenz im .condarc trägt
-# (Laufzeit ist ohnehin offline). Transitive Deps (pvxs 1.5, autosave/caputlog/iocstats/recsync) zieht
-# essioc/require automatisch.
+# Versions-Pins (gemessen): versions-stabil, aber NICHT byte-reproduzierbar — kein conda-Lock, die
+# transitiven Deps löst conda zur Build-Zeit auf. channel_alias wird NACH dem Install wieder entfernt,
+# damit das weitergegebene Image keine latente ESS-Artifactory-Referenz im .condarc trägt (Laufzeit ist
+# ohnehin offline). Transitive Deps (pvxs 1.5, autosave/caputlog/iocstats/recsync) zieht essioc/require automatisch.
 RUN conda config --system --prepend channels ess-conda-local \
  && conda config --system --set channel_alias https://artifactory.esss.lu.se/artifactory/api/conda \
  && conda config --system --set channel_priority strict \
