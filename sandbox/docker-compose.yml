@@ -41,8 +41,11 @@ services:
     restart: "no"
 
   # --- Phase B / M1: ChannelFinder + Elasticsearch ---------------------------------------------
-  # Shape = ESS ics-software/channelfinderservice/compose.yml (Tag ChannelFinder-5.1.0); Images anon
-  # (elastic.co / GHCR), Laufzeit 127.0.0.1-lokal. demo_auth-/cf.ldif-Creds = Test-Creds, NIE Produktion.
+  # Shape = Upstream-CF-Dev-Compose: ics-software/channelfinderservice/compose.yml @ ChannelFinder-5.1.0 ist die
+  # Upstream-Dev-Convenience-Compose, nur nach ESS-GitLab gespiegelt — KEIN ESS-Deploy-Artefakt. ESS-Prod läuft
+  # CF 4.7.3-alpha auf ES 8.11.3 als ESS-Wrapper-Image (ics-ans-role-channelfinder); die Sandbox nutzt bewusst
+  # Upstream-5.1.0 (API-kompatibel für die read-only MCP-Lookups) — Angleichung läuft (decision GR / Option C).
+  # Images anon (elastic.co / GHCR), Laufzeit 127.0.0.1-lokal. demo_auth-/cf.ldif-Creds = Test-Creds, NIE Produktion.
   # test-ioc bleibt UNANGETASTET (eigenes Netz channelfinder-net; der recsync-Join folgt erst in M2).
   elasticsearch:
     # Digest-gepinnt (reproduzierbarer Pull): Tag + @sha256 des verifiziert laufenden Images
@@ -186,7 +189,10 @@ services:
   # --- Phase C / C-2: Phoebus-Alarm-Stack (Kafka KRaft + ES + alarm-server + alarm-logger) -------
   # Aktiviert is_alarm_configured (Coverage-Signal) ueber die Alarm-Logger-REST. Images:
   # apache/kafka:3.8.0 (single-broker KRaft, KEIN Zookeeper) + Upstream-Phoebus alarm-server/-logger
-  # (ghcr :master; ESS hat KEIN eigenes Deploy-Image, nur Maven-Wrapper -> Upstream ist der Kanon).
+  # (ghcr :master = 6.0.0-SNAPSHOT). ESS hat KEIN Docker-Image für den Alarm-Stack (Deploy = Ansible/systemd),
+  # ABER einen gepinnten Prod-Deploy-Stand 5.0.052 (ics-ans-alarm-server host_vars/group_vars @ master; Artefakte
+  # service-alarm-{server,logger}-5.0.052 in libs-release-local/org/phoebus/). ':master' ist NICHT der ESS-Kanon
+  # -> bewusste Mirror-Fidelity-Abweichung; Angleichung läuft (decision GR / Option C; s. ESS-Konformitäts-QA).
   # ⚠ Ports REMAPPT (CF besitzt 8080/9200): Logger-REST -> 8081, Alarm-ES -> 9201.
   # ⚠ Config-Import-Reihenfolge ZWINGEND: alarm-kafka + alarm-logger up (Logger subscribed) -> DANN
   # alarm-server -import (sonst landet die Config in Kafka, aber nie im ES-Index -> REST liefert leer).

@@ -164,8 +164,12 @@ Vier Container — `alarm-kafka` (`apache/kafka:3.8.0`, **KRaft**, kein Zookeepe
 Config aus Kafka, watcht PVs via PVA) — plus der Mini-Tree `sandbox/alarm/config.xml` (4 EVR-PVs unter
 Config-Name `Accelerator`). Aktiviert das Coverage-Signal `is_alarm_configured` über die Alarm-Logger-REST
 `/search/alarm/config`, sobald `EPICS_MCP_ALARM_URL=http://localhost:8081` gesetzt ist (`.mcp.json` → **neues
-Fenster**). Upstream-Phoebus-`:master`-Images (ESS stellt kein eigenes Deploy-Image bereit, nur einen
-Maven-Wrapper → Upstream ist hier der Kanon).
+Fenster**). Upstream-Phoebus-`:master`-Images (= 6.0.0-SNAPSHOT). **ESS hat kein Docker-Image für den
+Alarm-Stack** (Deploy = Ansible/systemd), aber einen gepinnten **Prod-Deploy-Stand 5.0.052** (`ics-ans-alarm-server`
+host_vars/group_vars @ master, Stand 2026-06-04; Artefakte `service-alarm-{server,logger}-5.0.052` in
+`libs-release-local/org/phoebus/`) — der **Prod-Deploy-Pin, NICHT der neueste Release** (Artifactory führt bis
+6.0.001). `:master` ist **NICHT** der ESS-Kanon → bewusste Mirror-Fidelity-Abweichung; Angleichung läuft
+(decision GR / Option C; s. `analysis/ess-konformitaets-qa-sandbox/`).
 
 **⚠ Import-Reihenfolge ZWINGEND** (sonst landet die Config in Kafka, aber nie im ES-Config-Index → die REST
 liefert dauerhaft leer, obwohl konfiguriert): erst Kafka + Logger hoch (Logger subscribed den Config-Topic),
