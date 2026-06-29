@@ -1,0 +1,13 @@
+diff --git a/server/pyproject.toml b/server/pyproject.toml
+index c577c92..870edb6 100644
+--- a/server/pyproject.toml
++++ b/server/pyproject.toml
+@@ -15,7 +15,7 @@ dependencies = [
+     "dataclasses; python_version < '3.7'",
+     "requests",
+     "twisted",
+-    "channelfinder @ https://github.com/ChannelFinder/pyCFClient/archive/refs/tags/v3.0.0.zip"
++    "channelfinder==3.0.0.post2"
+ ]
+ 
+ [project.optional-dependencies]

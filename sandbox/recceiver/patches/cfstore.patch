@@ -1,0 +1,50 @@
+diff --git a/server/recceiver/cfstore.py b/server/recceiver/cfstore.py
+index e2e2611..0265721 100755
+--- a/server/recceiver/cfstore.py
++++ b/server/recceiver/cfstore.py
+@@ -9,6 +9,7 @@ from collections import defaultdict
+ from dataclasses import dataclass, field
+ from typing import Any, Callable, Dict, List, Optional, Set, Tuple
+ 
++import urllib3
+ from channelfinder import ChannelFinderClient
+ from requests import ConnectionError, RequestException
+ from zope.interface import implementer
+@@ -50,10 +51,12 @@ class CFConfig:
+     record_description_enabled: bool = False
+     clean_on_start: bool = True
+     clean_on_stop: bool = True
+-    username: str = "cfstore"
+     recceiver_id: str = RECCEIVERID_DEFAULT
+     timezone: Optional[str] = None
+     cf_query_limit: int = DEFAULT_QUERY_LIMIT
++    base_url: str = ""
++    username: str = ""
++    password: str = ""
+ 
+     @classmethod
+     def loads(cls, conf: ConfigAdapter) -> "CFConfig":
+@@ -75,6 +78,8 @@ class CFConfig:
+             recceiver_id=conf.get("recceiverId", RECCEIVERID_DEFAULT),
+             timezone=conf.get("timezone", ""),
+             cf_query_limit=conf.get("findSizeLimit", DEFAULT_QUERY_LIMIT),
++            base_url=conf.get("baseURL", "cf"),
++            password=conf.get("password", "cf"),
+         )
+ 
+ 
+@@ -287,7 +292,13 @@ class CFProcessor(service.Service):
+         _log.info("CF_START")
+ 
+         if self.client is None:  # For setting up mock test client
+-            self.client = ChannelFinderClient()
++            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
++            self.client = ChannelFinderClient(
++                BaseURL=self.cf_config.base_url,
++                username=self.cf_config.username,
++                password=self.cf_config.password,
++                verify_ssl=False,
++            )
+             try:
+                 cf_properties = {cf_property["name"] for cf_property in self.client.getAllProperties()}
+                 required_properties = {

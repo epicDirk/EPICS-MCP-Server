@@ -16,7 +16,7 @@ ESS-Produktion NICHT. Zur **Laufzeit kein ESS-Kontakt** (nur der einmalige Image
 | **`test-ioc`** | echtes **e3-IOC** (`require essioc`), Gerät `FBIS-DLN01:Ctrl-EVR-01`, serviert die `.db` über CA+PVA (QSRV2) | 5064/5065 (CA), 5075 (PVA) |
 | **`elasticsearch`** (**Phase B / M1 — da**) | Backend für ChannelFinder (`:8.18.0`, single-node, xpack-security off) | 9200 |
 | **`channelfinder`** (**Phase B / M1 — da**) | PV-Verzeichnis (REST), `ghcr.io/channelfinder/channelfinderservice:ChannelFinder-5.1.0`; API nativ unter `/ChannelFinder/resources/…` | 8080 |
-| **`recceiver`** (**Phase B / M2 — LIVE**) | vanilla recsync 1.8 (ohne Patches); empfängt die reccaster-Records des `test-ioc` → schreibt sie auto nach CF (essioc→reccaster→recceiver→CF) | — (container-intern, UDP 5049) |
+| **`recceiver`** (**Phase B / M2 — LIVE, ESS-Bau VOLL**) | recsync 1.8 + die 4 ESS-Patches (`pyproj`/`cfstore`/`expandvars`/`channelowner`) + gepinnte requirements + multi-stage venv (wortgetreu `ics-docker/recceiver`, decision GR/P3); empfängt die reccaster-Records des `test-ioc` → schreibt sie auto nach CF | — (container-intern, UDP 5049) |
 | **`archiver`** (**Phase C / C-1 — LIVE**) | EPICS Archiver Appliance (`pklaus/archiver-appliance`, single-JVM, Redis-Persistence statt MariaDB); archiviert die `test-ioc`-PVs **per CA über die Bridge** → aktiviert `is_archived`/`get_pv_history` | 17665 |
 | **`archiver-redis`** (**Phase C / C-1**) | Config-Persistenz des Archivers (ersetzt MariaDB) | — (container-intern, 6379) |
 
@@ -38,19 +38,27 @@ braucht keine Auth. Die cf.ldif-Creds `admin/1234` gehören zur *deaktivierten* 
 ### M2 — echtes Auto-Populate (reccaster → recceiver → ChannelFinder)
 
 Statt zu seeden schreibt der **recceiver** die Records des IOC automatisch nach CF: der `essioc`-**reccaster**
-im `test-ioc` lauscht auf `0.0.0.0:5049`; der **recceiver** (`sandbox/recceiver/`, **vanilla recsync 1.8 ohne
-Patches**) sendet alle 15 s einen UDP-Broadcast (`255.255.255.255:5049`, subnetz-unabhängig); der reccaster
-verbindet sich per UDP-Quell-IP zurück und überträgt seine Records. Die CF-Verbindung kommt aus
-**`channelfinderapi.conf`** (`[DEFAULT] BaseURL=http://channelfinder:8080/ChannelFinder`, `admin/adminPass`) —
-recsync-`cfstore` ruft `ChannelFinderClient()` ohne Args, pyCFClient (v3.0.0) liest die conf aus `/etc` ODER dem
-cwd. `docker.conf` `[cf]` setzt alias/recordType/recordDesc + `cleanOnStart` + festen `recceiverId=recsync-sandbox`
-(so inaktiviert das Clean NUR die recceiver-eigenen Kanäle; die admin-geseedeten M1-Kanäle bleiben unberührt).
+im `test-ioc` lauscht auf `0.0.0.0:5049`; der **recceiver** (`sandbox/recceiver/`, **ESS-Bau VOLL: recsync 1.8 +
+die 4 ESS-Patches**, decision GR/P3) sendet alle 15 s einen UDP-Broadcast (`255.255.255.255:5049`, subnetz-
+unabhängig); der reccaster verbindet sich per UDP-Quell-IP zurück und überträgt seine Records. **CF-Verbindung
+seit P3 über die `docker.conf`-ENV** (`cfstore.patch`+`expandvars.patch`: `cfstore` ruft jetzt
+`ChannelFinderClient(BaseURL=%(CHANNELFINDER_URL)s, …, verify_ssl=False)`; `channelfinderapi.conf` ist **entfernt**) —
+die `CHANNELFINDER_URL`/`USERNAME`/`PASSWORD` setzt der compose-`environment:`-Block des recceiver-Service
+(`http://channelfinder:8080/ChannelFinder`, `admin/adminPass`). `docker.conf` `[cf]` trägt zudem
+`alias/recordType/recordDesc` + `cleanOnStart` + den festen `recceiverId=recsync-sandbox` (literal, **B3** — bewusste
+Abweichung vom ESS-Verbatim, da Docker-Container keinen stabilen Hostname haben; so inaktiviert das Clean NUR die
+recceiver-eigenen Kanäle; die admin-geseedeten M1-Kanäle bleiben unberührt).
 
 **recceiver bauen + starten (gegated — Container-Lifecycle, vorher `docker ps`):**
 
 ```powershell
-docker compose -f sandbox/docker-compose.yml build recceiver   # Egress github.com+pypi.org (direkt; bei Block:
-                                                               # HTTPS_PROXY/HTTP_PROXY-Env → build.args, wie ioc-e3)
+# ⚠ artifactory.esss.lu.se ist ESS-INTERN → der Build-Container erreicht es NICHT direkt (github.com schon).
+# Pflicht (P3, channelfinder==3.0.0.post2 ist nur auf Artifactory): Host-CONNECT-Proxy mit ECHTER CPython starten
+# — NICHT dem Store-Shim WindowsApps\python.exe (dessen AppContainer blockt non-loopback → Container bekommt errno 111):
+#   & "$env:LOCALAPPDATA\Python\pythoncore-3.14-64\python.exe" sandbox/connect_proxy.py 8899   # Hintergrund
+# Build mit NUR HTTPS_PROXY (HTTP_PROXY leer lassen → apt geht direkt am CONNECT-only-Proxy vorbei):
+$env:HTTPS_PROXY="http://host.docker.internal:8899"; docker compose -f sandbox/docker-compose.yml build recceiver
+# Proxy nach dem Build SOFORT stoppen (garantiert, auch bei Build-Fehler) + $env:HTTPS_PROXY wieder leeren.
 # Minimaler Blast-Radius (CF/ES laufen lassen): nur test-ioc dem Netz beitreten + recceiver gegen das laufende CF:
 docker compose -f sandbox/docker-compose.yml up -d --no-deps --force-recreate test-ioc   # ⚠ PVA-5075-Smoke davor/danach!
 docker compose -f sandbox/docker-compose.yml up -d --no-deps recceiver

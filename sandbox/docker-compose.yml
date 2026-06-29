@@ -114,9 +114,10 @@ services:
     restart: "no"
 
   # --- Phase B / M2: recceiver (essioc → reccaster → recceiver → ChannelFinder Auto-Populate) ------
-  # Vanilla recsync 1.8 (sandbox/recceiver/Dockerfile, OHNE ESS-Patches). Empfängt die reccaster-
-  # Records des test-ioc über die gemeinsame channelfinder-net-Bridge und schreibt sie via
-  # channelfinderapi.conf nach CF. Kein veröffentlichter Port nötig (Announce-Broadcast + der
+  # ESS-Prod-Bau (decision GR / Option C, P3 / Scope VOLL): recsync 1.8 + die 4 ESS-Patches + gepinnte
+  # requirements + multi-stage venv (sandbox/recceiver/Dockerfile, wortgetreu ics-docker/recceiver id 7168).
+  # Empfängt die reccaster-Records des test-ioc über die gemeinsame channelfinder-net-Bridge und schreibt
+  # sie via docker.conf-ENV nach CF. Kein veröffentlichter Port nötig (Announce-Broadcast + der
   # TCP-connect-back des reccasters sind container-intern auf der Bridge).
   recceiver:
     build:
@@ -131,6 +132,14 @@ services:
     depends_on:
       channelfinder:
         condition: service_healthy
+    # P3 / Scope VOLL (decision GR): CF-Verbindung kommt aus der docker.conf-ENV (NICHT mehr aus
+    # channelfinderapi.conf). Das Dockerfile-ENV liefert die ESS-Defaults aller %(VAR)s; hier nur die
+    # Overrides für unsere Sandbox-CF. recceiverId steht stabil literal in der docker.conf (B3 / QA-C5).
+    environment:
+      CHANNELFINDER_URL: "http://channelfinder:8080/ChannelFinder"   # B3: Vollform (Port + /ChannelFinder); ESS-Default http://channelfinder bräche gegen unser :8080
+      CHANNELFINDER_USERNAME: "admin"                                 # = CF demo_auth-User + Channel-Owner (konsistent mit M1-Seed)
+      CHANNELFINDER_PASSWORD: "adminPass"                             # Sandbox-Test-Cred, NIE Produktion
+      RECCEIVER_LOGLEVEL: "INFO"                                      # Sandbox-Verify: CF_START/CF_INIT sind INFO (ESS-Default WARN würde sie verstecken)
     mem_limit: 256m
     restart: "no"
 

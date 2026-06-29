@@ -1,0 +1,44 @@
+diff --git a/server/recceiver/processors.py b/server/recceiver/processors.py
+index b47823f..d7d9de6 100644
+--- a/server/recceiver/processors.py
++++ b/server/recceiver/processors.py
+@@ -2,6 +2,7 @@
+ 
+ import configparser as ConfigParser
+ import logging
++import os
+ from configparser import ConfigParser as Parser
+ from os.path import expanduser
+ 
+@@ -33,19 +34,19 @@ class ConfigAdapter(object):
+ 
+     def get(self, key, D=None):
+         try:
+-            return self._C.get(self._S, key)
++            return self._C.get(self._S, key, vars=dict(os.environ))
+         except ConfigParser.NoOptionError:
+             return D
+ 
+     def getboolean(self, key, D=None):
+         try:
+-            return self._C.getboolean(self._S, key)
++            return self._C.getboolean(self._S, key, vars=dict(os.environ))
+         except (ConfigParser.NoOptionError, ValueError):
+             return D
+ 
+     def __getitem__(self, key):
+         try:
+-            return self._C.get(self._S, key)
++            return self._C.get(self._S, key, vars=dict(os.environ))
+         except ConfigParser.NoOptionError:
+             raise KeyError("No option value")
+ 
+@@ -70,7 +71,7 @@ class ProcessorController(service.MultiService):
+         elif not parser.has_section("recceiver"):
+             parser.add_section("recceiver")
+ 
+-        pnames = parser.get("recceiver", "procs").split(",")
++        pnames = parser.get("recceiver", "procs", vars=dict(os.environ)).split(",")
+ 
+         plugs = {}
+ 

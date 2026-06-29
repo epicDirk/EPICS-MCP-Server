@@ -1,0 +1,17 @@
+diff --git a/server/recceiver/cfstore.py b/server/recceiver/cfstore.py
+index e2e2611..6471014 100755
+--- a/server/recceiver/cfstore.py
++++ b/server/recceiver/cfstore.py
+@@ -552,11 +552,7 @@ class CFProcessor(service.Service):
+             hostname=transaction.client_infos.get("HOSTNAME") or transaction.source_address.host,
+             ioc_name=transaction.client_infos.get("IOCNAME") or str(transaction.source_address.port),
+             ioc_IP=transaction.source_address.host,
+-            owner=(
+-                transaction.client_infos.get("ENGINEER")
+-                or transaction.client_infos.get("CF_USERNAME")
+-                or self.cf_config.username
+-            ),
++            owner=(transaction.client_infos.get("CF_CHANNEL_OWNER") or self.cf_config.username),
+             time=self.current_time(self.cf_config.timezone),
+             port=transaction.source_address.port,
+         )
