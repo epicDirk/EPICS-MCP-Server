@@ -121,8 +121,80 @@ services:
     mem_limit: 256m
     restart: "no"
 
+  # --- Phase C / C-1: EPICS Archiver Appliance (Redis-Persistence, Single-JVM) -------------------
+  # Aktiviert is_archived/get_pv_history (Client-Code + @mcp.tool existieren bereits), sobald
+  # EPICS_MCP_ARCHIVER_URL=http://localhost:17665 gesetzt ist (.mcp.json → neues Fenster). Shape
+  # gespiegelt von der pklaus-Referenz (github.com/pklaus/archiver-appliance-with-example-ioc/
+  # docker-compose.yml), aber gegen UNSER test-ioc (kein gebündeltes Example-IOC).
+  # ⚠ Image pklaus/archiver-appliance ist ein 2020er Community-Build (einziger Tag `latest`) →
+  # nach Live-Verify per @sha256 digest-pinnen (PIN-AFTER-VERIFY, Ritual wie elasticsearch :48-50).
+  archiver-redis:
+    # Digest-gepinnt (reproduzierbarer Pull); Tag bleibt zur Lesbarkeit.
+    image: redis:7-alpine@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99
+    container_name: epics-sandbox-archiver-redis
+    networks: [channelfinder-net]
+    command: ["redis-server", "--appendonly", "yes"]
+    mem_limit: 256m
+    volumes:
+      - archiver-db:/data
+    restart: "no"
+
+  archiver:
+    # Digest-gepinnt nach Live-Verify (29.06.2026: alle 5 EVR-PVs „Being archived", getData.json
+    # 12VValue=12.0, Engine-Connect zum test-ioc per CA über die Bridge). Image-Version 0.0.1-2019.
+    image: pklaus/archiver-appliance@sha256:bf079289001366cc8aade0dd4d6e14757a60dad71de056f6ab983abadf9c424e
+    container_name: epics-sandbox-archiver
+    hostname: archappl
+    networks: [channelfinder-net]
+    depends_on:
+      - archiver-redis
+    environment:
+      # mgmt+engine+etl+retrieval in EINEM Tomcat → alles unter :17665 (matcht archiver_client.py).
+      ARCHAPPL_ALL_APPS_ON_ONE_JVM: "true"
+      # Redis statt MariaDB (kein DB-Schema/Connector nötig). REDISURL = der Bridge-Service-Name.
+      ARCHAPPL_PERSISTENCE_LAYER: "org.epics.archiverappliance.config.persistence.RedisPersistence"
+      ARCHAPPL_PERSISTENCE_LAYER_REDISURL: "archiver-redis"
+      # PV-Auflösung zum test-ioc per CA über die Bridge (Container→Container). Die Archiver-Engine
+      # ist CA-nativ (2020er Build, vor brauchbarem PVA-Archiving); das test-ioc serviert CA auf 5064.
+      # ⚠ Der WSL2-NAT-Befund (README.md "Netzwerk-Befund") betrifft NUR Host-Windows→Container —
+      # Container→Container-CA auf der Bridge ist davon unberührt. Beim Bau verifizieren, dass die
+      # Engine die PV erreicht (getPVStatus → "Being archived"); falls nicht, ist das der Debug-Punkt.
+      EPICS_CA_ADDR_LIST: "epics-sandbox-test-ioc"
+      EPICS_CA_AUTO_ADDR_LIST: "no"
+      EPICS_CA_SERVER_PORT: "5064"
+    mem_limit: 2g
+    # Die Appliance liest stdin (start.sh) — ohne (pseudo-)TTY EOF-Exit (wie test-ioc).
+    stdin_open: true
+    tty: true
+    healthcheck:
+      # Port-Readiness via bash /dev/tcp (kein curl-Bedarf, wie CF). Die 4 Webapps brauchen Anlauf
+      # → großzügiges start_period. Nichts hängt an dieser Health-Condition (rein informativ).
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/17665"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 120s
+    volumes:
+      - archiver-sts:/storage/sts     # short-term (hourly)
+      - archiver-mts:/storage/mts     # medium-term (daily)
+      - archiver-lts:/storage/lts     # long-term (yearly)
+      - archiver-logs:/storage/logs
+    ports:
+      - "17665:17665"
+    restart: "no"
+
 volumes:
   cf-es-data:
+    driver: local
+  archiver-db:
+    driver: local
+  archiver-sts:
+    driver: local
+  archiver-mts:
+    driver: local
+  archiver-lts:
+    driver: local
+  archiver-logs:
     driver: local
 
 networks:

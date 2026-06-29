@@ -17,6 +17,8 @@ ESS-Produktion NICHT. Zur **Laufzeit kein ESS-Kontakt** (nur der einmalige Image
 | **`elasticsearch`** (**Phase B / M1 — da**) | Backend für ChannelFinder (`:8.18.0`, single-node, xpack-security off) | 9200 |
 | **`channelfinder`** (**Phase B / M1 — da**) | PV-Verzeichnis (REST), `ghcr.io/channelfinder/channelfinderservice:ChannelFinder-5.1.0`; API nativ unter `/ChannelFinder/resources/…` | 8080 |
 | **`recceiver`** (**Phase B / M2 — LIVE**) | vanilla recsync 1.8 (ohne Patches); empfängt die reccaster-Records des `test-ioc` → schreibt sie auto nach CF (essioc→reccaster→recceiver→CF) | — (container-intern, UDP 5049) |
+| **`archiver`** (**Phase C / C-1 — LIVE**) | EPICS Archiver Appliance (`pklaus/archiver-appliance`, single-JVM, Redis-Persistence statt MariaDB); archiviert die `test-ioc`-PVs **per CA über die Bridge** → aktiviert `is_archived`/`get_pv_history` | 17665 |
+| **`archiver-redis`** (**Phase C / C-1**) | Config-Persistenz des Archivers (ersetzt MariaDB) | — (container-intern, 6379) |
 
 ### ChannelFinder hochfahren (M1 — Seed-first)
 
@@ -123,6 +125,37 @@ docker build --build-arg HTTPS_PROXY=http://host.docker.internal:8899 `
 
 Pakete (gemessen): epics-base 7.0.9 + pvxs 1.5 (conda-forge), require 6.0.0 + essioc 2.1.9 + autosave 6.0
 + caputlog 4.1 + iocstats 4.0 + recsync 1.8 (ess-conda-local). Artifactory-Details: [`docs/ess-gitlab-and-datasets.md`](../../docs/ess-gitlab-and-datasets.md) + [`local-services-research/SOURCES-and-artifactory.md`](../../analysis/epics-mcp-daily-work/local-services-research/SOURCES-and-artifactory.md).
+
+## Phase C / C-1 — Archiver Appliance (`is_archived` / `get_pv_history`)
+
+Lokale **EPICS Archiver Appliance** (`pklaus/archiver-appliance`, single-JVM, **Redis**-Persistence statt
+MariaDB) auf `:17665`. Der MCP-Client (`archiver_client.py`) + die Tools `is_archived`/`get_pv_history`
+existieren bereits — sie „leuchten auf", sobald `EPICS_MCP_ARCHIVER_URL=http://localhost:17665` gesetzt ist
+(`.mcp.json` → **neues Fenster**). Die Archiver-Engine ist **CA-nativ** (2019er Build) und erreicht das
+`test-ioc` **per CA über die Bridge** (Container→Container; der WSL2-NAT-Befund unten betrifft NUR
+Host-Windows→Container) — live verifiziert (`connectionState:true`).
+
+**Hochfahren (gegated — vorher `docker ps` frisch):**
+
+```powershell
+docker ps                                                                              # frisch (Multi-Window!)
+docker compose -f sandbox/docker-compose.yml up -d --no-deps archiver-redis archiver   # --no-deps: Bestand unberührt
+# ~1-2 Min Anlauf (4 Webapps in einem Tomcat), dann:
+curl -fs http://localhost:17665/mgmt/bpl/getApplianceInfo                              # appliance up
+EPICS-MCP-Server\.venv\Scripts\python.exe sandbox/seed/archive_evr_pvs.py             # 5 EVR-PVs anmelden + pollen
+# Status-Reise: "Appliance assigned" -> (Initial sampling, paar Min) -> "Being archived":
+curl -fs "http://localhost:17665/mgmt/bpl/getPVStatus?pv=FBIS-DLN01:Ctrl-EVR-01:12VValue"
+```
+
+**⚠ Das Archiver-Set ist BEWUSST vom CF-Seed entkoppelt** (`seed/archive_evr_pvs.py`): es enthält `3V3Value`
+(nie-manuell-CF-geseedet, via recsync registriert) **statt** `CmdRst` — so beweist sich der Archiver-Pfad
+unabhängig vom CF-Seed.
+
+**Verifikation (live bestätigt 2026-06-29):** alle 5 EVR-PVs (`12VValue`/`Temp1Value`/`EvtACnt-I`/`3V3Value`/
+`BMod`) → `Being archived`; `getData.json` 12VValue → `val=12.0` (EGU V, PREC 2). Beide Images digest-gepinnt
+nach Verify. **MCP-Tool-DoD (neues Fenster):** `is_archived("FBIS-DLN01:Ctrl-EVR-01:12VValue")` →
+`{enabled:true, archived:true}`; `get_pv_history(…, <ISO from>, <ISO to>)` → `total>0`, `val≈12.0`. Optionaler
+Live-Test hinter `EPICS_SANDBOX_ARCHIVER=1`.
 
 ## Hochfahren
 
