@@ -48,9 +48,12 @@ services:
   # Images anon (elastic.co / GHCR), Laufzeit 127.0.0.1-lokal. demo_auth-/cf.ldif-Creds = Test-Creds, NIE Produktion.
   # test-ioc bleibt UNANGETASTET (eigenes Netz channelfinder-net; der recsync-Join folgt erst in M2).
   elasticsearch:
-    # Digest-gepinnt (reproduzierbarer Pull): Tag + @sha256 des verifiziert laufenden Images
-    # (docker inspect --format '{{index .RepoDigests 0}}' …:8.18.0). Tag bleibt zur Lesbarkeit.
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.0@sha256:70b37a809f04cd86e14460f959ff33c272a38f24268eee8b913c2cc73ac86c88
+    # ESS-Prod-Pin: ES 8.11.3 (ics-ans-role-channelfinder pinnt 8.11.3 für die CF-Rolle; decision GR / Option C, P1).
+    # Digest-gepinnt nach Live-Verify (PIN-AFTER-VERIFY 2026-06-29): ES bootete green auf leerem Volume (Wipe nötig,
+    # da 8.18-Volume forward-inkompatibel), CF-5.1.0 connectet sauber (Created index channelfinder/cf_tags/cf_properties),
+    # Re-Seed via recsync auf 576, coverage_audit cf_and_display 572 == Baseline.
+    # (Vorher 8.18.0@sha256:70b37a809f04cd86e14460f959ff33c272a38f24268eee8b913c2cc73ac86c88 — Rollback-Referenz.)
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3@sha256:2892d2363c3c12c5ed54c64faf89e3a19d633d8dd0d190d0bffe03035ff099b3
     container_name: cf-elasticsearch
     networks: [channelfinder-net]
     environment:
