@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Minimaler Phoebus-Alarm-Tree fuer die lokale Sandbox (Config-Name "Accelerator").
+  Schema: app/alarm/examples/alarm_configuration.xsd (config > component > pv).
+  Import (EINMALIG, nach Kafka+Logger up) ueber den alarm-server-Import-Modus; der genaue
+  docker-compose-Befehl steht in sandbox/README.md, Abschnitt "Phase C / C-2".
+  (XML-Kommentare duerfen kein doppeltes Minus enthalten, darum hier ohne CLI-Flags.)
+
+  Bewusst nur 4 der echten EVR-Records: die injizierte Luecke DlyGen0Prescaler-SP ist NICHT im
+  Tree (Negativ-Coverage-Beweis: is_alarm_configured fuer diese PV gibt configured:false zurueck).
+-->
+<config name="Accelerator">
+  <component name="FBIS-DLN01">
+    <pv name="FBIS-DLN01:Ctrl-EVR-01:12VValue">
+      <description>EVR 12V rail voltage</description>
+      <enabled>true</enabled>
+    </pv>
+    <pv name="FBIS-DLN01:Ctrl-EVR-01:Temp1Value">
+      <description>EVR temperature 1</description>
+      <enabled>true</enabled>
+    </pv>
+    <pv name="FBIS-DLN01:Ctrl-EVR-01:EvtACnt-I">
+      <description>EVR event A counter</description>
+      <enabled>true</enabled>
+    </pv>
+    <pv name="FBIS-DLN01:Ctrl-EVR-01:BMod">
+      <description>EVR beam mode</description>
+      <enabled>true</enabled>
+    </pv>
+  </component>
+</config>

@@ -157,6 +157,39 @@ nach Verify. **MCP-Tool-DoD (neues Fenster):** `is_archived("FBIS-DLN01:Ctrl-EVR
 `{enabled:true, archived:true}`; `get_pv_history(…, <ISO from>, <ISO to>)` → `total>0`, `val≈12.0`. Optionaler
 Live-Test hinter `EPICS_SANDBOX_ARCHIVER=1`.
 
+## Phase C / C-2 — Phoebus-Alarm-Stack (`is_alarm_configured`)
+
+Vier Container — `alarm-kafka` (`apache/kafka:3.8.0`, **KRaft**, kein Zookeeper) + `alarm-elasticsearch`
+(eigener Cluster, Host-Port **9201**) + `alarm-logger` (REST Host-Port **8081**) + `alarm-server` (liest die
+Config aus Kafka, watcht PVs via PVA) — plus der Mini-Tree `sandbox/alarm/config.xml` (4 EVR-PVs unter
+Config-Name `Accelerator`). Aktiviert das Coverage-Signal `is_alarm_configured` über die Alarm-Logger-REST
+`/search/alarm/config`, sobald `EPICS_MCP_ALARM_URL=http://localhost:8081` gesetzt ist (`.mcp.json` → **neues
+Fenster**). Upstream-Phoebus-`:master`-Images (ESS stellt kein eigenes Deploy-Image bereit, nur einen
+Maven-Wrapper → Upstream ist hier der Kanon).
+
+**⚠ Import-Reihenfolge ZWINGEND** (sonst landet die Config in Kafka, aber nie im ES-Config-Index → die REST
+liefert dauerhaft leer, obwohl konfiguriert): erst Kafka + Logger hoch (Logger subscribed den Config-Topic),
+**DANN** der Config-Import.
+
+**Hochfahren (gegated — vorher `docker ps` frisch):**
+
+```powershell
+docker ps                                                                              # frisch (Multi-Window!)
+docker compose -f sandbox/docker-compose.yml up -d --no-deps alarm-kafka alarm-elasticsearch alarm-logger alarm-server
+# ~1-2 Min Anlauf (Kafka + ES + 2 JVMs), dann die Config EINMALIG importieren:
+docker compose -f sandbox/docker-compose.yml run --rm --no-deps alarm-server `
+  /bin/bash -c "java -jar /alarmserver/service-alarm-server-*.jar -config Accelerator -import /config/config.xml -server alarm-kafka:9092"
+# Config im ES-Index gelandet? (Logger ~15 s nach Import):
+curl -fs "http://localhost:8081/search/alarm/config?config=/Accelerator/*FBIS-DLN01:Ctrl-EVR-01:12VValue"
+```
+
+**Verifikation (DoD, neues Fenster):** `is_alarm_configured("FBIS-DLN01:Ctrl-EVR-01:12VValue")` →
+`{enabled:true, configured:true}`; `is_alarm_configured("FBIS-DLN01:Ctrl-EVR-01:DlyGen0Prescaler-SP")` →
+`{configured:false}` (Negativ-Beweis = die bewusst injizierte Lücke, NICHT im Tree). Offline-Regression
+`tests/test_alarm.py`; optionaler Live-Test hinter `EPICS_SANDBOX_ALARM=1`. ⚠ `/search/alarm/config` ist ein
+Config-**Change**-Log — ein Treffer beweist Konfiguration; ein Leertreffer ist nur dann ein echtes „nein",
+wenn der Logger beim Import lief (sonst withheld).
+
 ## Hochfahren
 
 ```powershell

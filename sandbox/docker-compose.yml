@@ -183,6 +183,122 @@ services:
       - "17665:17665"
     restart: "no"
 
+  # --- Phase C / C-2: Phoebus-Alarm-Stack (Kafka KRaft + ES + alarm-server + alarm-logger) -------
+  # Aktiviert is_alarm_configured (Coverage-Signal) ueber die Alarm-Logger-REST. Images:
+  # apache/kafka:3.8.0 (single-broker KRaft, KEIN Zookeeper) + Upstream-Phoebus alarm-server/-logger
+  # (ghcr :master; ESS hat KEIN eigenes Deploy-Image, nur Maven-Wrapper -> Upstream ist der Kanon).
+  # ⚠ Ports REMAPPT (CF besitzt 8080/9200): Logger-REST -> 8081, Alarm-ES -> 9201.
+  # ⚠ Config-Import-Reihenfolge ZWINGEND: alarm-kafka + alarm-logger up (Logger subscribed) -> DANN
+  # alarm-server -import (sonst landet die Config in Kafka, aber nie im ES-Index -> REST liefert leer).
+  # PIN-AFTER-VERIFY: apache/kafka:3.8.0 + die zwei ghcr :master nach Live-Verify @sha256 pinnen.
+  alarm-kafka:
+    # Digest-gepinnt nach Live-Verify (29.06.2026: KRaft-Broker healthy, Config-Import + REST-Index ok).
+    image: apache/kafka:3.8.0@sha256:c89f315cff967322c5d2021434b32271393cb193aa7ec1d43e97341924e57069
+    container_name: epics-sandbox-alarm-kafka
+    hostname: alarm-kafka
+    networks: [channelfinder-net]
+    environment:
+      KAFKA_NODE_ID: "1"
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@alarm-kafka:9093"
+      KAFKA_LISTENERS: "PLAINTEXT://:9092,CONTROLLER://:9093"
+      # ⚠ #1-Alarm-Fehler: advertised MUSS der Bridge-Hostname sein (nicht localhost), sonst
+      # verbinden sich alarm-server/-logger nach dem Bootstrap nicht zum Broker zurueck.
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://alarm-kafka:9092"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+      KAFKA_HEAP_OPTS: "-Xmx512m -Xms512m"
+    mem_limit: 1g
+    volumes:
+      - alarm-kafka-data:/var/lib/kafka/data
+    healthcheck:
+      # Broker-Readiness (KRaft formatiert die Storage automatisch beim ersten Start).
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 >/dev/null 2>&1"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 45s
+    restart: "no"
+
+  alarm-elasticsearch:
+    # Gleicher gepruefter ES-Pin wie CF, aber EIGENER Cluster (Entkopplung) + Host-Port 9201.
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.0@sha256:70b37a809f04cd86e14460f959ff33c272a38f24268eee8b913c2cc73ac86c88
+    container_name: epics-sandbox-alarm-es
+    networks: [channelfinder-net]
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      cluster.name: alarm
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    mem_limit: 1g
+    volumes:
+      - alarm-es-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 60s
+    ports:
+      - "9201:9200"       # nur Debug (CF-ES besitzt 9200)
+    restart: "no"
+
+  alarm-logger:
+    # Digest-gepinnt nach Live-Verify (REST :8081 healthy, /search/alarm/config liefert die Config).
+    image: ghcr.io/controlsystemstudio/phoebus/service-alarm-logger:master@sha256:3cea753655f12d16bd262b1a8750df849bda5c5b4b5fdee2781b2420c44496de
+    container_name: epics-sandbox-alarm-logger
+    networks: [channelfinder-net]
+    depends_on:
+      alarm-kafka:
+        condition: service_started     # Logger retried Kafka selbst; nicht an die Health gaten
+      alarm-elasticsearch:
+        condition: service_healthy
+    # Direkte Flags (kein Properties-File noetig) — Form aus dem Upstream
+    # docker-compose-alarm-logger.yml. Glob im JAR-Pfad -> Shell-Form (/bin/bash -c) noetig.
+    command: >
+      /bin/bash -c "
+      java -jar /alarmlogger/service-alarm-logger-*.jar
+      -bootstrap.servers alarm-kafka:9092
+      -es_host alarm-elasticsearch
+      -topics Accelerator -noshell"
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/localhost/8080'"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 60s
+    ports:
+      - "8081:8080"       # Logger-REST (CF besitzt 8080)
+    restart: "no"
+
+  alarm-server:
+    # Digest-gepinnt nach Live-Verify (Config-Import nach Kafka erfolgreich).
+    image: ghcr.io/controlsystemstudio/phoebus/service-alarm-server:master@sha256:d2717210f58e5411902216ba091d1775c2bb7feaec6e14118a4af65fd125a800
+    container_name: epics-sandbox-alarm-server
+    networks: [channelfinder-net]
+    depends_on:
+      alarm-kafka:
+        condition: service_started
+    # Liest die Config aus Kafka + watcht die IOC-PVs via PVA (fuer State; NICHT noetig fuers
+    # Coverage-Signal is_alarm_configured, das aus dem Logger-ES-Config-Index kommt). PVA ueber den
+    # Nameserver des test-ioc auf der Bridge (best-effort; State ist Wedge-4-Concern).
+    environment:
+      EPICS_PVA_NAME_SERVERS: "epics-sandbox-test-ioc:5075"
+      EPICS_PVA_AUTO_ADDR_LIST: "NO"
+    command: >
+      /bin/bash -c "
+      java -jar /alarmserver/service-alarm-server-*.jar
+      -config Accelerator -server alarm-kafka:9092 -noshell"
+    mem_limit: 512m
+    volumes:
+      - ./alarm:/config:ro
+    restart: "no"
+
 volumes:
   cf-es-data:
     driver: local
@@ -195,6 +311,10 @@ volumes:
   archiver-lts:
     driver: local
   archiver-logs:
+    driver: local
+  alarm-kafka-data:
+    driver: local
+  alarm-es-data:
     driver: local
 
 networks:
