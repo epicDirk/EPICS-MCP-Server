@@ -1,0 +1,9 @@
+# Der recceiver-Build COPYt diese Dateien in den Linux-Container und `git apply`t die Patches.
+# Sie MÜSSEN LF behalten — auf einem frischen Windows-Checkout würde core.autocrlf=true sie sonst zu
+# CRLF wandeln, und `git apply` (ohne --ignore-whitespace) bräche an den dann nicht mehr passenden
+# Kontextzeilen (recsync 1.8 ist LF). docker.conf liest ConfigParser, Dockerfile/requirements sind
+# ebenfalls LF-stabil zu halten.
+patches/*.patch  text eol=lf
+docker.conf      text eol=lf
+Dockerfile       text eol=lf
+requirements.txt text eol=lf
