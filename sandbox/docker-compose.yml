@@ -208,16 +208,27 @@ services:
     restart: "no"
 
   # --- Phase C / C-2: Phoebus-Alarm-Stack (Kafka KRaft + ES + alarm-server + alarm-logger) -------
-  # Aktiviert is_alarm_configured (Coverage-Signal) ueber die Alarm-Logger-REST. Images:
-  # apache/kafka:3.8.0 (single-broker KRaft, KEIN Zookeeper) + Upstream-Phoebus alarm-server/-logger
-  # (ghcr :master = 6.0.0-SNAPSHOT). ESS hat KEIN Docker-Image für den Alarm-Stack (Deploy = Ansible/systemd),
-  # ABER einen gepinnten Prod-Deploy-Stand 5.0.052 (ics-ans-alarm-server host_vars/group_vars @ master; Artefakte
-  # service-alarm-{server,logger}-5.0.052 in libs-release-local/org/phoebus/). ':master' ist NICHT der ESS-Kanon
-  # -> bewusste Mirror-Fidelity-Abweichung; Angleichung läuft (decision GR / Option C; s. ESS-Konformitäts-QA).
+  # Aktiviert is_alarm_configured (Coverage-Signal) über die Alarm-Logger-REST.
+  # ESS-PROD-STAND (decision GR / Option C, P4 ERLEDIGT): alarm-server/-logger sind SELF-BUILT auf den
+  # ESS-Prod-Deploy-Release 5.0.052 (Artefakte service-alarm-{server,logger}-5.0.052 in libs-release-local/
+  # org/phoebus/ — am HOST gezogen via fetch_alarm_artifacts.sh + COPY; Build-Kontexte ./alarm-server,
+  # ./alarm-logger). ESS stellt kein Docker-Image für den Alarm-Stack bereit (Deploy = Ansible/systemd);
+  # 5.0.052 = der Prod-Deploy-Pin (ics-ans-alarm-server host_vars/group_vars @ master), NICHT der neueste
+  # Release (Artifactory führt bis 6.0.001).
+  # alarm-elasticsearch: ESS-Pin = 8.2.3, aber auf diesem cgroup-v2-Host nicht lauffähig (bundled-JDK-NPE in
+  # 8.2.3 + 8.4.3) → 8.5.3 = erste host-lauffähige ES-Linie, am nächsten an 8.2.x (s. Service-Block). Funktional
+  # neutral: 5.0.052 nutzt den neuen co.elastic.clients-ES-8-Client (elasticsearch-java:8.2.0), wire-kompatibel
+  # über die GANZE ES-8.x-Linie; der ES-8-Client-BLOCKER (RestHighLevelClient/CSS #2273) ist quellcode-tot
+  # (8-Agenten-QA + Live-Recheck Tag ESS-5.0.052, commit 718af74a: RestHighLevelClient = 0 Treffer in Quelle+POM).
+  # BEWUSSTE Abweichungen (ehrlich): alarm-kafka bleibt apache/kafka:3.8.0 (KRaft, kein Zookeeper) — eine
+  # bewusste, REST-gleichwertige Sandbox-Vereinfachung (ESS-Prod = ics-ans-role-kafka, Confluent + ZooKeeper),
+  # NICHT "kein 3.6.2-Image". alarm-server -server via CLI statt settings.ini = bewusste, parser-äquivalente
+  # Vereinfachung.
   # ⚠ Ports REMAPPT (CF besitzt 8080/9200): Logger-REST -> 8081, Alarm-ES -> 9201.
   # ⚠ Config-Import-Reihenfolge ZWINGEND: alarm-kafka + alarm-logger up (Logger subscribed) -> DANN
   # alarm-server -import (sonst landet die Config in Kafka, aber nie im ES-Index -> REST liefert leer).
-  # PIN-AFTER-VERIFY: apache/kafka:3.8.0 + die zwei ghcr :master nach Live-Verify @sha256 pinnen.
+  # PIN-AFTER-VERIFY: apache/kafka:3.8.0 + alarm-elasticsearch:8.2.3 @sha256 gepinnt; self-built (server/
+  # logger) -> kein Registry-Digest → Pins = Base-Digest (FROM ...@sha256) + Artefakt-sha256 (sha256sum -c).
   alarm-kafka:
     # Digest-gepinnt nach Live-Verify (29.06.2026: KRaft-Broker healthy, Config-Import + REST-Index ok).
     image: apache/kafka:3.8.0@sha256:c89f315cff967322c5d2021434b32271393cb193aa7ec1d43e97341924e57069
@@ -252,8 +263,15 @@ services:
     restart: "no"
 
   alarm-elasticsearch:
-    # Gleicher gepruefter ES-Pin wie CF, aber EIGENER Cluster (Entkopplung) + Host-Port 9201.
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.0@sha256:70b37a809f04cd86e14460f959ff33c272a38f24268eee8b913c2cc73ac86c88
+    # ESS-Alarm-ES-Pin = 8.2.3; auf diesem cgroup-v2-Dev-Host (Docker Desktop/WSL2) NICHT lauffähig: das in
+    # ES 8.2.3 UND 8.4.3 gebündelte JDK 18.0.x crasht beim cgroup-v2-Memory-Read (CgroupInfo.getMountPoint()
+    # NPE, JDK-8281571; 3 Fix-Versuche erfolglos: cgroupns=host / -XX:-UseContainerSupport / ohne mem_limit).
+    # → 8.5.3: erste ES-Linie mit cgroup-v2-fähigem JDK (19) → die 8.2.x-NÄCHSTE Version, die hier bootet
+    #   (live verifiziert: cluster green, 0 NPE).
+    # FIDELITY-CAVEAT (bewusste, host-bedingte Abweichung, decision GR / Option C): funktional neutral — der
+    # 5.0.052-Logger nutzt elasticsearch-java:8.2.0, wire-kompatibel über die GANZE ES-8.x-Linie.
+    # EIGENER Cluster (Entkopplung vom CF-ES 8.11.3) + Host-Port 9201. @sha256 am Verify-Zeitpunkt erfasst.
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.3@sha256:c9b454f73b1e2365d43f1f46f1b9464b981e5f98c1dd46fee01dbd5a4a446973
     container_name: epics-sandbox-alarm-es
     networks: [channelfinder-net]
     environment:
@@ -275,8 +293,9 @@ services:
     restart: "no"
 
   alarm-logger:
-    # Digest-gepinnt nach Live-Verify (REST :8081 healthy, /search/alarm/config liefert die Config).
-    image: ghcr.io/controlsystemstudio/phoebus/service-alarm-logger:master@sha256:3cea753655f12d16bd262b1a8750df849bda5c5b4b5fdee2781b2420c44496de
+    # SELF-BUILT ESS-Prod-Release 5.0.052 (P4; Spring-Boot Fat-Jar). Build-Kontext ./alarm-logger (Artefakt
+    # am Host gezogen + COPY). Vorher ghcr :master (6.0.0-SNAPSHOT). PIN: Base-Digest + Artefakt-sha256 im Dockerfile.
+    build: ./alarm-logger
     container_name: epics-sandbox-alarm-logger
     networks: [channelfinder-net]
     depends_on:
@@ -284,14 +303,16 @@ services:
         condition: service_started     # Logger retried Kafka selbst; nicht an die Health gaten
       alarm-elasticsearch:
         condition: service_healthy
-    # Direkte Flags (kein Properties-File noetig) — Form aus dem Upstream
-    # docker-compose-alarm-logger.yml. Glob im JAR-Pfad -> Shell-Form (/bin/bash -c) noetig.
+    # ESS-treue 5.0.052-Flags (single-dash). -thread_pool_size ist in 5.0.052 gültig (in master ENTFERNT →
+    # Bau gegen master würde scheitern); -es_port 9200 = container-intern (Host 9201). Shell-Wrapper
+    # /bin/bash -c BLEIBT (H1): die -D-Props mit Spaces (purge_cron_expr) + die Mehrzeilen-Form brauchen eine
+    # Shell — bare-Exec verlöre Quoting/-D. Bare Jar via WORKDIR /opt (Dockerfile). -D-Wert in '...' (genestet im "...").
     command: >
       /bin/bash -c "
-      java -jar /alarmlogger/service-alarm-logger-*.jar
-      -bootstrap.servers alarm-kafka:9092
-      -es_host alarm-elasticsearch
-      -topics Accelerator -noshell"
+      java -Dretain_indices_count=6 -Dretention_period_days=100 -Dpurge_cron_expr='0 0 0 * * SUN'
+      -jar service-alarm-logger-5.0.052.jar -noshell -topics Accelerator
+      -es_host alarm-elasticsearch -es_port 9200 -es_sniff false
+      -bootstrap.servers alarm-kafka:9092 -date_span_units M -date_span_value 1 -thread_pool_size 4"
     mem_limit: 512m
     healthcheck:
       test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/localhost/8080'"]
@@ -304,8 +325,9 @@ services:
     restart: "no"
 
   alarm-server:
-    # Digest-gepinnt nach Live-Verify (Config-Import nach Kafka erfolgreich).
-    image: ghcr.io/controlsystemstudio/phoebus/service-alarm-server:master@sha256:d2717210f58e5411902216ba091d1775c2bb7feaec6e14118a4af65fd125a800
+    # SELF-BUILT ESS-Prod-Release 5.0.052 (P4; Thin-Jar + lib/, WORKDIR = Entpack-Verzeichnis). Build-Kontext
+    # ./alarm-server. Vorher ghcr :master. PIN: Base-Digest + Artefakt-sha256 im Dockerfile.
+    build: ./alarm-server
     container_name: epics-sandbox-alarm-server
     networks: [channelfinder-net]
     depends_on:
@@ -317,9 +339,11 @@ services:
     environment:
       EPICS_PVA_NAME_SERVERS: "epics-sandbox-test-ioc:5075"
       EPICS_PVA_AUTO_ADDR_LIST: "NO"
+    # Bare Jar via WORKDIR /opt/service-alarm-server-5.0.052 (Thin-Jar neben lib/, rel. Class-Path). -server via
+    # CLI statt settings.ini = bewusste, parser-äquivalente Vereinfachung. Config-Import = separater `compose run` (README).
     command: >
       /bin/bash -c "
-      java -jar /alarmserver/service-alarm-server-*.jar
+      java -jar service-alarm-server-5.0.052.jar
       -config Accelerator -server alarm-kafka:9092 -noshell"
     mem_limit: 512m
     volumes:

@@ -172,26 +172,68 @@ Vier Container — `alarm-kafka` (`apache/kafka:3.8.0`, **KRaft**, kein Zookeepe
 Config aus Kafka, watcht PVs via PVA) — plus der Mini-Tree `sandbox/alarm/config.xml` (4 EVR-PVs unter
 Config-Name `Accelerator`). Aktiviert das Coverage-Signal `is_alarm_configured` über die Alarm-Logger-REST
 `/search/alarm/config`, sobald `EPICS_MCP_ALARM_URL=http://localhost:8081` gesetzt ist (`.mcp.json` → **neues
-Fenster**). Upstream-Phoebus-`:master`-Images (= 6.0.0-SNAPSHOT). **ESS hat kein Docker-Image für den
-Alarm-Stack** (Deploy = Ansible/systemd), aber einen gepinnten **Prod-Deploy-Stand 5.0.052** (`ics-ans-alarm-server`
-host_vars/group_vars @ master, Stand 2026-06-04; Artefakte `service-alarm-{server,logger}-5.0.052` in
-`libs-release-local/org/phoebus/`) — der **Prod-Deploy-Pin, NICHT der neueste Release** (Artifactory führt bis
-6.0.001). `:master` ist **NICHT** der ESS-Kanon → bewusste Mirror-Fidelity-Abweichung; Angleichung läuft
-(decision GR / Option C; s. `analysis/ess-konformitaets-qa-sandbox/`).
+Fenster**).
 
-**⚠ Import-Reihenfolge ZWINGEND** (sonst landet die Config in Kafka, aber nie im ES-Config-Index → die REST
-liefert dauerhaft leer, obwohl konfiguriert): erst Kafka + Logger hoch (Logger subscribed den Config-Topic),
-**DANN** der Config-Import.
+**ESS-Prod-Stand (decision GR / Option C, P4 erledigt):** `alarm-server`/`-logger` sind **self-built auf den
+ESS-Prod-Deploy-Release 5.0.052** (`ics-ans-alarm-server` host_vars/group_vars @ master; Artefakte
+`service-alarm-{server,logger}-5.0.052` in `libs-release-local/org/phoebus/` — der **Prod-Deploy-Pin, NICHT der
+neueste Release**, Artifactory führt bis 6.0.001). **ESS stellt kein Docker-Image für den Alarm-Stack bereit**
+(Deploy = Ansible/systemd) → Self-Build aus dem Artifactory-Artefakt: am **Host** gezogen
+(`sandbox/fetch_alarm_artifacts.sh`, anon, kein Token/Proxy) + per `COPY` in den Build (der Container-Egress
+erreicht Artifactory NICHT). `alarm-elasticsearch` = **8.5.3** (ESS-Pin ist **8.2.3**, aber auf diesem
+cgroup-v2-Dev-Host nicht lauffähig: das in 8.2.3 **und** 8.4.3 gebündelte JDK 18.0.x crasht beim cgroup-v2-Memory-
+Read [`CgroupInfo.getMountPoint()` NPE, JDK-8281571; 3 Fix-Versuche erfolglos]; **8.5.3** = erste ES-Linie mit
+cgroup-v2-fähigem JDK 19 → die **8.2.x-nächste host-lauffähige** Version — **bewusster, host-bedingter
+Fidelity-Caveat**, decision GR/Option C). Funktional neutral: 5.0.052 nutzt den neuen `co.elastic.clients`-ES-8-
+Client (`elasticsearch-java:8.2.0`), wire-kompatibel über die GANZE ES-8.x-Linie (der ES-8-Client-BLOCKER
+CSS #2273 ist quellcode-tot — `RestHighLevelClient` = 0 Treffer am Tag `ESS-5.0.052`).
+**Bewusste Abweichungen:** `alarm-kafka` bleibt `apache/kafka:3.8.0` (KRaft) = REST-gleichwertige
+Sandbox-Vereinfachung (ESS-Prod = `ics-ans-role-kafka`, Confluent + ZooKeeper), NICHT „kein 3.6.2-Image";
+`alarm-server -server` via CLI statt `settings.ini` = parser-äquivalente Vereinfachung.
+**Quell-Referenz (Tag `ESS-5.0.052`):** Logger = `services/alarm-logger/src/main/java/org/phoebus/alarm/logging/`,
+Server = `services/alarm-server/src/main/java/org/phoebus/applications/alarm/server/`.
+
+**⚠ ZWINGENDE Reihenfolge (zwei Fallen, beide P4 live erlebt):** **(1) Topics VOR dem Logger anlegen** — startet
+der Logger, bevor `Accelerator`/`AcceleratorCommand` existieren, schaltet seine Kafka-Streams-App mit
+`MissingSourceTopicException → SHUTDOWN_CLIENT` ab (der REST-Container bleibt „healthy", indexiert aber **nichts**;
+auto-create allein hilft nicht, weil die Topics erst entstehen, wenn Server/Import Kafka berühren — zu spät).
+**(2) Config-Import NACH** Topics + Logger (sonst landet die Config in Kafka, aber nie im ES-Config-Index → REST
+dauerhaft leer). Der Config-Topic `Accelerator` ist **log-compacted** (Phoebus-Konvention).
+
+**Build (P4 — einmalig; vorher die Artefakte am Host ziehen):**
+
+```bash
+bash sandbox/fetch_alarm_artifacts.sh                                                   # 190 MB → Build-Kontexte + sha256
+MSYS_NO_PATHCONV=1 docker compose -f sandbox/docker-compose.yml build alarm-server alarm-logger   # self-built 5.0.052 (COPY, kein Proxy)
+```
+
+**⚠ Migration 8.18 → 8.5.3 (ES-Downgrade + Kafka-Offset-Falle):** ein reiner ES-Wipe re-indexiert NICHT (der
+Kafka-Streams-Consumer behält committed Offsets) → **beide** Volumes wipen, sonst bleibt der ES-Config-Index leer
+und die REST liefert still `false`. Erst `rm -sf` (ein bloßer Stop hält das Volume), dann `volume rm`:
+
+```bash
+MSYS_NO_PATHCONV=1 docker compose -f sandbox/docker-compose.yml rm -sf --stop alarm-server alarm-logger alarm-elasticsearch alarm-kafka
+docker volume rm sandbox_alarm-es-data sandbox_alarm-kafka-data
+```
 
 **Hochfahren (gegated — vorher `docker ps` frisch):**
 
 ```powershell
 docker ps                                                                              # frisch (Multi-Window!)
-docker compose -f sandbox/docker-compose.yml up -d --no-deps alarm-kafka alarm-elasticsearch alarm-logger alarm-server
-# ~1-2 Min Anlauf (Kafka + ES + 2 JVMs), dann die Config EINMALIG importieren:
+# 1. Kafka + ES hoch
+docker compose -f sandbox/docker-compose.yml up -d --no-deps alarm-kafka alarm-elasticsearch
+# 2. Topics VOR dem Logger anlegen (Falle 1; Config-Topic Accelerator = compacted):
+$K = "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --if-not-exists --partitions 1 --replication-factor 1"
+docker exec epics-sandbox-alarm-kafka sh -c "$K --topic Accelerator --config cleanup.policy=compact"
+docker exec epics-sandbox-alarm-kafka sh -c "$K --topic AcceleratorCommand"
+docker exec epics-sandbox-alarm-kafka sh -c "$K --topic AcceleratorTalk"
+# 3. Logger + Server hoch (Topics existieren → Streams starten sauber)
+docker compose -f sandbox/docker-compose.yml up -d --no-deps alarm-logger alarm-server
+# 4. Config EINMALIG importieren (bare Jar via WORKDIR):
 docker compose -f sandbox/docker-compose.yml run --rm --no-deps alarm-server `
-  /bin/bash -c "java -jar /alarmserver/service-alarm-server-*.jar -config Accelerator -import /config/config.xml -server alarm-kafka:9092"
-# Config im ES-Index gelandet? (Logger ~15 s nach Import):
+  /bin/bash -c "java -jar service-alarm-server-5.0.052.jar -config Accelerator -import /config/config.xml -server alarm-kafka:9092 -noshell"
+# Config im ES-Index gelandet? (Logger ~15-50 s nach Import). Falls der Logger doch vor den Topics startete und
+# seine Streams abschaltete (SHUTDOWN_CLIENT): `docker restart epics-sandbox-alarm-logger` → konsumiert von earliest.
 curl -fs "http://localhost:8081/search/alarm/config?config=/Accelerator/*FBIS-DLN01:Ctrl-EVR-01:12VValue"
 ```
 

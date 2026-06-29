@@ -1,0 +1,6 @@
+# LF-Schutz für die Alarm-Build-Dateien (P4, decision GR / Option C). Gleiche Lehre wie der recceiver-
+# Build (commit 118d80d): auf einem frischen Windows-Checkout würde core.autocrlf=true diese Dateien zu
+# CRLF wandeln — das fetch-Skript bräche dann unter bash (\r), und CRLF in einem Dockerfile-RUN ist fragil.
+fetch_alarm_artifacts.sh   text eol=lf
+alarm-server/Dockerfile    text eol=lf
+alarm-logger/Dockerfile    text eol=lf
