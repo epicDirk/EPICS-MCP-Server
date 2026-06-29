@@ -131,6 +131,8 @@ services:
   # docker-compose.yml), aber gegen UNSER test-ioc (kein gebündeltes Example-IOC).
   # ⚠ Image pklaus/archiver-appliance ist ein 2020er Community-Build (einziger Tag `latest`) →
   # nach Live-Verify per @sha256 digest-pinnen (PIN-AFTER-VERIFY, Ritual wie elasticsearch :48-50).
+  # ESS-Prod-Stand: Archiver Appliance 2.1.1 (epics-archiver-release-remote) + MariaDB + 4-Instanz-Tomcat
+  # (ics-ans-role-epicsarchiverap) — bewusste Sandbox-Abweichung; Angleichung läuft (decision GR / Option C, P5).
   archiver-redis:
     # Digest-gepinnt (reproduzierbarer Pull); Tag bleibt zur Lesbarkeit.
     image: redis:7-alpine@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99
