@@ -20,3 +20,6 @@ iocshLoad("$(essioc_DIR)/common_config.iocsh")
 
 epicsEnvSet("P", "FBIS-DLN01:Ctrl-EVR-01:")
 dbLoadRecords("fbis-dln01-evr.db", "P=$(P)")
+# W2: NAMES-treuer EVR-Spiegel (567 Sim-Records, read-only ASG private) — generiert von
+# gen_evr_full_db.py aus evr-records.txt, disjunkt zu den 9 kuratierten oben (kein Doppel-Record).
+dbLoadRecords("fbis-dln01-evr-full.db", "P=$(P)")

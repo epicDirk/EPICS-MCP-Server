@@ -28,7 +28,7 @@ RUN conda config --system --prepend channels ess-conda-local \
  && conda clean -afy
 
 WORKDIR /iocs/test-evr
-COPY st.cmd fbis-dln01-evr.db ./
+COPY st.cmd fbis-dln01-evr.db fbis-dln01-evr-full.db ./
 
 # conda run -n base aktiviert das Env (EPICS_BASE, ${essioc_DIR}, require-Pfade) und startet iocsh.
 # iocsh wrappt softIocPVX -> CA (5064/5065) + PVA (5075), QSRV2. (compose published 5064/5065/5075.)

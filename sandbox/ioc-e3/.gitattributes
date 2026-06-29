@@ -1,0 +1,8 @@
+# Diese Dateien werden in einen Linux-Container gemountet (docker-compose ./ioc-e3) und vom essioc-
+# iocsh/dbLoadRecords gelesen → IMMER LF, nie autocrlf-CRLF. Ein Windows-Checkout mit core.autocrlf
+# wandelte sie sonst in CRLF, was den .db-/st.cmd-Parser im Container brechen kann.
+*.db          text eol=lf
+*.txt         text eol=lf
+st.cmd        text eol=lf
+common_config text eol=lf
+Dockerfile    text eol=lf

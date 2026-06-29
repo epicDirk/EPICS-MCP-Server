@@ -147,7 +147,7 @@ def test_find_channels_no_seed() -> None:
 
 @pytest.mark.skipif(_NO_CF, reason=_SKIP_CF_REASON)
 async def test_cf_unregistered_w1_mechanism(tmp_path: Path) -> None:
-    """W1: das cf_unregistered-Mechanismus-Urteil gegen die LIVE ChannelFinder (9-Record-Sandbox).
+    """W1: das cf_unregistered-Mechanismus-Urteil gegen die LIVE ChannelFinder (Subset-Mechanismus).
 
     Ein winziges synthetisches Display referenziert zwei BEDIENTE Records (12VValue/3V3Value, in CF
     registriert) und ein referenziertes-aber-unbedientes EVR-Register (DlyGen0Prescaler-SP — ein
@@ -195,4 +195,91 @@ async def test_cf_unregistered_w1_mechanism(tmp_path: Path) -> None:
     )
     assert served_a not in cf_unregistered  # bedient + in CF registriert
     assert served_b not in cf_unregistered
-    assert report["cf_registered"] >= 5  # CF hält den 9-Record-Gerätesatz unter diesem Prefix
+    assert report["cf_registered"] >= 5  # CF hält den Gerätesatz unter diesem Prefix (W2: ~576)
+
+
+# --- W2: voller EVR-Spiegel (567 Sim-Records + 1 bewusste Lücke) ---------------------------------
+
+# Workspace-ROOT der fbis-Displays (BIS/fbis-systemexpert liegt eine Ebene über EPICS-MCP-Server).
+_FBIS_ROOT = Path(__file__).resolve().parents[2] / "BIS" / "fbis-systemexpert"
+_SANDBOX_ST_CMD = Path(__file__).resolve().parent.parent / "sandbox" / "ioc-e3" / "st.cmd"
+# Die EINE bewusst injizierte Lücke (gen_evr_full_db.py GAP). MUSS dem Harvest-Cap entsprechen.
+_W2_GAP = "FBIS-DLN01:Ctrl-EVR-01:DlyGen0Prescaler-SP"
+# Harvest- UND Test-Cap müssen identisch sein (sonst divergieren bediente vs. linked Menge):
+# der Generator erntete evr-records.txt bei DEFAULT context_cap=256 → hier EXPLIZIT 256 pinnen
+# (nicht auf DEFAULT_PV_CONTEXT_CAP verlassen — eine Default-Änderung bräche den Beweis still).
+_W2_CONTEXT_CAP = 256
+
+
+@pytest.mark.skipif(_NO_CF, reason=_SKIP_CF_REASON)
+@pytest.mark.skipif(
+    not _FBIS_ROOT.is_dir(), reason="BIS/fbis-systemexpert nicht im Workspace gefunden"
+)
+async def test_cf_unregistered_w2_full_mirror_collapses_to_gap() -> None:
+    """W2: gegen das volle fbis kollabiert cf_unregistered auf GENAU die eine Lücke.
+
+    Das Sandbox-IOC bedient jetzt den vollen EVR-Registersatz (567 Sim-Records), den die
+    fbis-Displays referenzieren — bis auf ``DlyGen0Prescaler-SP``. Damit ist jeder linked-Record
+    entweder generiert, kuratiert oder DIESE Lücke → cf_unregistered == [Lücke] (exakt 1). Das ist
+    der „gesunder Spiegel + saubere Lücke"-Beweis (gegen die 645/650-Headline des Spielzeug-IOC).
+
+    Robustheit: erst auf die recsync→CF-Populate warten (billiger ``find_channels``-Poll, 90 s —
+    nicht den ~60-s-fbis-Walk pollen), DANN cross-plane EINMAL bei context_cap=256 rechnen.
+    """
+    _reset_epics_singletons()
+    from epics_pv_mcp.config import get_config
+    from epics_pv_mcp.services.channelfinder_client import ChannelFinderClient
+    from epics_pv_mcp.tools.crossplane import _crossplane_check
+
+    prefix = "FBIS-DLN01:Ctrl-EVR-01:"
+
+    # 1) Warten, bis der Spiegel in CF angekommen ist: alle bedienten Records aktiv, die Lücke NICHT
+    #    registriert. Billiger CF-GET-Poll (~1 s/Iteration), nicht der teure fbis-Walk.
+    url = get_config().channelfinder_url or "http://localhost:8080/ChannelFinder"
+    client = ChannelFinderClient(url)
+    deadline = time.monotonic() + 90.0
+    while True:
+        channels = client.find_channels(f"{prefix}*", max_results=2000)
+        names = {c["name"] for c in channels}
+        active = all(c["properties"].get("pvStatus") == "Active" for c in channels)
+        # Erwartung: ~576 bediente, alle Active, die Lücke fehlt.
+        if len(names) >= 570 and active and _W2_GAP not in names:
+            break
+        if time.monotonic() >= deadline:
+            break
+        time.sleep(5.0)
+    assert _W2_GAP not in names, f"Lücke {_W2_GAP} unerwartet in CF registriert — Spiegel falsch?"
+    assert len(names) >= 570, (
+        f"nur {len(names)} Kanäle unter {prefix}* (erwartet ~576) — Populate unvollständig? "
+        "recceiver-Log (CF_COMMIT) prüfen; bei Diskrepanz longin-/dbd + Boot-Log."
+    )
+
+    # 2) Cross-Plane EINMAL gegen das volle fbis rechnen (context_cap EXPLIZIT = Harvest-Cap).
+    report = (
+        await _crossplane_check(
+            str(_FBIS_ROOT),
+            str(_SANDBOX_ST_CMD),
+            query_channelfinder=True,
+            context_cap=_W2_CONTEXT_CAP,
+        )
+    )["report"]
+    assert isinstance(report, dict)
+    cf_unregistered = report["cf_unregistered"]
+    assert isinstance(cf_unregistered, list)
+
+    # Harter Guard: die Lücke ist IMMER cf_unregistered (referenziert, in linked, nicht bedient).
+    assert _W2_GAP in cf_unregistered, (
+        f"{_W2_GAP} fehlt in cf_unregistered (len {len(cf_unregistered)}) — CF-Check lief nicht, "
+        "war gecappt, oder die Lücke wurde versehentlich bedient."
+    )
+    # Der Beweis: GENAU die eine Lücke, nichts sonst.
+    assert cf_unregistered == [_W2_GAP], (
+        f"cf_unregistered != [{_W2_GAP}] (ist {cf_unregistered}) — Spiegel bedient nicht alle "
+        "linked-Records (Boot-/Typ-Problem), oder der Cap divergiert vom Harvest."
+    )
+    # Kein Cap-Withhold, und die Ratio-Caveat-Note (>= 50% unregistriert = unvollständiges CF) ist
+    # ABWESEND (1/573 << 50%). Die separate LOWER-BOUND-Note (context-capped) darf vorkommen.
+    assert report["cf_capped"] is False
+    assert not any(">= 50%" in note for note in report["notes"]), (
+        "Ratio-Caveat-Note vorhanden — cf_unregistered ist unerwartet groß (unvollständiges CF?)."
+    )

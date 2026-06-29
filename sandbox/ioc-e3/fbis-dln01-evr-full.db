@@ -1,0 +1,3977 @@
+# fbis-dln01-evr-full.db — GENERIERT von gen_evr_full_db.py, NICHT von Hand editieren
+# (regenerieren: uv run python sandbox/ioc-e3/gen_evr_full_db.py).
+# NAMES-treuer Sim-Spiegel des mTCA-EVR-300: Soft-Records mit den echten Record-Namen,
+# die die fbis-Displays referenzieren (Quelle: evr-records.txt). VAL=0, read-only
+# (ASG private), autosave-frei (ohne autosaveFields-Tags). ASG(private) liefert essioc
+# common_config.iocsh (access-security) — live bewiesen an den kuratierten Readbacks.
+# Bewusst injizierte Lücke (NICHT bedient): DlyGen0Prescaler-SP — cf_unregistered kollabiert darauf.
+# Die 9 kuratierten Records liegen separat in fbis-dln01-evr.db (eigene Lade-Zeile).
+
+record(ai, "$(P)12VType") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)1V0Type") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)1V0Value") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)1V8Type") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)1V8Value") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)3V3MPType") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)3V3MPValue") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)3V3Type") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)BManuf") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)BName") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)BPN") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)BSN") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)CntHwOflw-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)CntLinkTimo-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)CntRxErr-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)CntSwOflw-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DCCorr-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DCEna-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DCID-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bi, "$(P)DCLck-Sts") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bi, "$(P)DCLckDat-Sts") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bi, "$(P)DCLckTrk-Sts") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DCMsrd-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DCTgt-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen0Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen0Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen0EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen0EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen0EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen0Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen0Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen0Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen10Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen10Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen10EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen10EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen10EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen10Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen10Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen10Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen10Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen11Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen11Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen11EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen11EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen11EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen11Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen11Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen11Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen11Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen12Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen12Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen12EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen12EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen12EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen12Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen12Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen12Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen12Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen13Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen13Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen13EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen13EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen13EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen13Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen13Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen13Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen13Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen14Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen14Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen14EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen14EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen14EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen14Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen14Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen14Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen14Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen15Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen15Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen15EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen15EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen15EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen15Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen15Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen15Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen15Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen16Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen16Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen16EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen16EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen16EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen16Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen16Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen16Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen16Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen17Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen17Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen17EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen17EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen17EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen17Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen17Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen17Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen17Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen18Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen18Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen18EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen18EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen18EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen18Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen18Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen18Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen18Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen19Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen19Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen19EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen19EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen19EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen19Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen19Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen19Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen19Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen1Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen1Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen1EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen1EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen1EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen1Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen1Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen1Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen1Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen20Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen20Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen20EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen20EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen20EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen20Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen20Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen20Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen20Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen21Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen21Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen21EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen21EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen21EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen21Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen21Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen21Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen21Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen22Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen22Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen22EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen22EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen22EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen22Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen22Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen22Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen22Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen23Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen23Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen23EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen23EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen23EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen23Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen23Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen23Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen23Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen2Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen2Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen2EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen2EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen2EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen2Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen2Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen2Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen2Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen3Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen3Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen3EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen3EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen3EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen3Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen3Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen3Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen3Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen4Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen4Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen4EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen4EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen4EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen4Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen4Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen4Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen4Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen5Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen5Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen5EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen5EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen5EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen5Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen5Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen5Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen5Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen6Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen6Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen6EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen6EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen6EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen6Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen6Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen6Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen6Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen7Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen7Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen7EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen7EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen7EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen7Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen7Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen7Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen7Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen8Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen8Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen8EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen8EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen8EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen8Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen8Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen8Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen8Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen9Delay-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen9Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen9EvtTrig0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen9EvtTrig1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen9EvtTrig2-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)DlyGen9Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)DlyGen9Polarity-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen9Prescaler-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)DlyGen9Width-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)Ena-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)EvtA-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)EvtB-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)EvtBCnt-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)EvtBlink0-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)EvtBlink1-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)EvtC-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)EvtCCnt-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)EvtCode-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)EvtD-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)EvtDCnt-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)EvtE-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)EvtECnt-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)EvtF-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)EvtFCnt-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)EvtG-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)EvtGCnt-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)EvtH-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)EvtHCnt-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)EvtResetPS-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)ExtInhib-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)FPGADoneType") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)FPGADoneValue") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)FPGAType") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)FPGAValue") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)FruId") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)FruName") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)FwVer-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)HS006AMC2Type") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)HS006AMC2Value") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)HotSwapType") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)HotSwapValue") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)HwType-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)InFP0CodeBack-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)InFP0CodeExt-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)InFP0Edge-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)InFP0Lvl-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)InFP0TrigBack-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)InFP0TrigExt-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)InFP1CodeBack-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)InFP1CodeExt-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)InFP1Edge-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)InFP1Lvl-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)InFP1TrigBack-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)InFP1TrigExt-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bi, "$(P)Link-Sts") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)LinkClk-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)LinkClk-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)LocalType") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)LocalValue") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutBack0Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutBack0Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack0Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack0SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack0SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack0SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutBack1Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutBack1Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack1Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack1SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack1SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack1SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutBack2Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutBack2Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack2Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack2SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack2SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack2SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutBack3Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutBack3Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack3Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack3SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack3SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack3SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutBack4Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutBack4Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack4Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack4SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack4SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack4SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutBack5Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutBack5Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack5Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack5SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack5SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack5SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutBack6Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutBack6Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack6Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack6SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack6SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack6SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutBack7Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutBack7Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack7Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack7SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack7SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutBack7SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutFP0Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutFP0Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFP0Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFP0SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFP0SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFP0SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutFP1Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutFP1Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFP1Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFP1SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFP1SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFP1SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutFP2Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutFP2Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFP2Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFP2SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFP2SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFP2SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutFP3Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutFP3Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFP3Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFP3SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFP3SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFP3SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutFPUV0Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutFPUV0Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFPUV0Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFPUV0SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFPUV0SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFPUV0SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutFPUV1Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutFPUV1Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFPUV1Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFPUV1SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFPUV1SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFPUV1SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutFPUV2Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutFPUV2Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFPUV2Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFPUV2SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFPUV2SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFPUV2SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutFPUV3Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutFPUV3Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFPUV3Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFPUV3SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFPUV3SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutFPUV3SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutIntLabel-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutIntSrc-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutIntSrc-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutIntSrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutIntSrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutIntSrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutRear0Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutRear0Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear0Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear0SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear0SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear0SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutRear1Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutRear1Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear1Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear1SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear1SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear1SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutRear2Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutRear2Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear2Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear2SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear2SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear2SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutRear3Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutRear3Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear3Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear3SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear3SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear3SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutRear4Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutRear4Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear4Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear4SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear4SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear4SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutRear5Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutRear5Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear5Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear5SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear5SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear5SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutRear6Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutRear6Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear6Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear6SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear6SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear6SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutRear7Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutRear7Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear7Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear7SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear7SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear7SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutRear8Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutRear8Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear8Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear8SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear8SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear8SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutRear9Label-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutRear9Src-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear9Src-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear9SrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear9SrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutRear9SrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutTCLKALabel-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutTCLKASrc-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutTCLKASrc-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutTCLKASrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutTCLKASrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutTCLKASrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)OutTCLKBLabel-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)OutTCLKBSrc-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutTCLKBSrc-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutTCLKBSrcDBus-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutTCLKBSrcPulse-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)OutTCLKBSrcScale-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)PManuf") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)PN") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)PName") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)PS0Div-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)PS0Rate-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)PS1Div-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)PS1Rate-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)PS2Div-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)PS2Rate-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)PSN") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bi, "$(P)Pll-Sts") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)Pos-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)REFType") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)REFValue") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)SFPDateManu-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)SFPPart-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)SFPPwrRX-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)SFPPwrTX-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)SFPSerial-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)SFPSpeedLink-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)SFPT-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)SFPVendor-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)Slot") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq0Commit-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq0Commit-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq0Disable-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq0Enable-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq0Enable-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq0Error-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq0EvtCode-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)SoftSeq0EvtCode-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq0Load-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq0Load-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)SoftSeq0NumOfRuns-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)SoftSeq0NumOfStarts-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq0RunMode-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq0RunMode-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq0SoftTrig-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq0Timestamp-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)SoftSeq0Timestamp-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq0TrigSrc-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq0TrigSrc0-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq0TrigSrc1-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq0TrigSrc2-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq0TsResolution-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq0TsResolution-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq0Unload-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq1Commit-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq1Commit-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq1Disable-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq1Enable-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq1Enable-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq1Error-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq1EvtCode-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)SoftSeq1EvtCode-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq1Load-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq1Load-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)SoftSeq1NumOfRuns-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)SoftSeq1NumOfStarts-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq1RunMode-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq1RunMode-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq1SoftTrig-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq1Timestamp-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)SoftSeq1Timestamp-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq1TrigSrc-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq1TrigSrc0-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq1TrigSrc1-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq1TrigSrc2-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq1TsResolution-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq1TsResolution-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq1Unload-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq2Commit-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq2Commit-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq2Disable-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq2Enable-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq2Enable-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq2Error-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq2EvtCode-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)SoftSeq2EvtCode-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq2Load-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq2Load-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)SoftSeq2NumOfRuns-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)SoftSeq2NumOfStarts-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq2RunMode-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq2RunMode-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq2SoftTrig-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq2Timestamp-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ao, "$(P)SoftSeq2Timestamp-SP") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq2TrigSrc-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq2TrigSrc0-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq2TrigSrc1-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq2TrigSrc2-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq2TsResolution-RB") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)SoftSeq2TsResolution-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bo, "$(P)SoftSeq2Unload-Cmd") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)State") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)SwVer-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)Temp1Type") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)Temp2Type") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)Temp2Value") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(longin, "$(P)Time-I") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(ai, "$(P)TimeSrc-Sel") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}
+
+record(bi, "$(P)TimeValid-Sts") {
+    field(DESC, "sim EVR register (W2 mirror)")
+    field(VAL,  "0")
+    field(PINI, "YES")
+    field(ASG,  "private")
+}

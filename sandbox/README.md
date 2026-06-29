@@ -78,6 +78,35 @@ konvention `Sec-Sub:Dis-Dev-Idx:Signal`; Signal-Namen aus dem BIS-Dataset EVR-AM
 > mrfioc2-EVR-IOC — in Produktion liefert das mrfioc2-Modul die EVR-PVs; hier sind es Soft-Records mit
 > ESS-konformen Namen/Feldern, damit der MCP gegen realistische ESS-PVs testet.
 
+### W2 — voller EVR-Spiegel (`fbis-dln01-evr-full.db`)
+
+Über die 9 kuratierten Records hinaus bedient das IOC den **vollen** EVR-Registersatz, den die fbis-Displays
+referenzieren — **567 Sim-Records** — **bis auf eine bewusst injizierte Lücke** (`DlyGen0Prescaler-SP`). Damit
+kollabiert `cf_unregistered` (Phase A) gegen das volle fbis auf **genau diese eine Lücke** statt auf das
+645/650-Rauschen des 9-Record-Spielzeugs („gesunder Spiegel + saubere Lücke"-Beweis; W2-Live-Test
+`test_cf_unregistered_w2_full_mirror_collapses_to_gap`).
+
+- **Quelle = `ioc-e3/evr-records.txt`** (573 distinct Record-Namen), geerntet aus `crossplane_check.pvs_linked`
+  auf `BIS/fbis-systemexpert` bei **DEFAULT `context_cap=256`** (prefix-gestrippt + `_record_name`-normalisiert).
+  Die Namen stehen NICHT literal in den `.bob` (makro-getemplatet) → einzige Quelle ist `pvs_linked`.
+- **Generiert** von `ioc-e3/gen_evr_full_db.py` (deterministisch, sortiert, LF): schließt die 9 kuratierten
+  (Doppel-Record-Boot-Fehler) + die Lücke aus → 573 − 5 (kuratiert-Overlap) − 1 = **567**. Typ-Heuristik (alle
+  boot-bewiesen): `-SP`→`ao` · `-Cmd`→`bo` · `-Sts`→`bi` · `-I`→`longin` · sonst→`ai`. Jeder Record VAL=0,
+  PINI=YES, **`ASG(private)` (read-only)**, **keine `info()`-Tags** (Autosave ist info-getrieben → ignoriert sie;
+  kein großes `.sav`, kein Boot-Delay). **Regenerieren:**
+  `cd EPICS-MCP-Server && uv run python sandbox/ioc-e3/gen_evr_full_db.py`. Unit-Test:
+  `tests/test_sandbox_evr_gen.py` (RELATIONEN, nicht die Zahl 567 — eine context-cap-Untergrenze).
+- **Reload = Restart** (kein Rebuild): `st.cmd` lädt `fbis-dln01-evr-full.db` als **zweite** `dbLoadRecords`-Zeile;
+  `./ioc-e3` ist gemountet → `docker compose -f sandbox/docker-compose.yml restart test-ioc` re-runt `iocsh st.cmd`
+  und lädt die neue `.db`. recsync re-announct die 567 nach CF (~15–90 s) → `find_channels("…:*")` ≈ **576**
+  (567 + 9 kuratiert; recsync/iocStats-Infra liegt unter dem DASH-Prefix `FBIS-DLN01-Ctrl-EVR-01:` und zählt NICHT
+  mit). **Rollback bei Boot-Fehler:** die zweite `dbLoadRecords`-Zeile in `st.cmd` auskommentieren + erneut
+  `restart` → zurück auf den 9-Record-Stand (die kuratierte `fbis-dln01-evr.db` bleibt unangetastet = Fallback).
+- **⚠️ CF-Cap-Override nötig:** der CF-Checker withheld bei `>= channelfinder_max_results` Kanälen (Default
+  **500**) → bei ~576 unter dem Prefix bräche `cf_unregistered` (und der W1-Live-Test). Darum in der Live-Lane
+  `EPICS_MCP_CHANNELFINDER_MAX_RESULTS=2000` setzen (`.mcp.json`-Env + `pytest -m live`-Env). Site-Default bleibt
+  500.
+
 ### Image bauen (einmalig — braucht ESS-Artifactory über den Host-Proxy)
 
 Der Build-Container erreicht ESS-Artifactory NICHT direkt (VPN-Route nur am Host). Darum ein
