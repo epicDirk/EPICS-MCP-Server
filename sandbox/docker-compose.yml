@@ -76,8 +76,14 @@ services:
     restart: "no"
 
   channelfinder:
-    # Digest-gepinnt (reproduzierbarer Pull): Tag + @sha256 des verifiziert laufenden Images.
-    image: ghcr.io/channelfinder/channelfinderservice:ChannelFinder-5.1.0@sha256:b9fc4276c89ea723030b80c8d475f0078731595df9a952adfc1773eea0ccd822
+    # SELF-BUILD CF 4.7.3-alpha (ESS-Prod-Pin ics-ans-role-channelfinder; kein GHCR-Tag) — spiegelt
+    # ics-docker/channelfinder (GitLab id 7114), ohne ESS-CA. decision GR / Option C, P2.
+    # Rollback-Referenz: image ghcr.io/channelfinder/channelfinderservice:ChannelFinder-5.1.0@sha256:b9fc4276c89ea723030b80c8d475f0078731595df9a952adfc1773eea0ccd822
+    build:
+      context: ./channelfinder
+      args:
+        HTTPS_PROXY: "${HTTPS_PROXY:-}"
+        HTTP_PROXY: "${HTTP_PROXY:-}"
     container_name: cf-channelfinder
     networks: [channelfinder-net]
     environment:
@@ -85,7 +91,8 @@ services:
       # ignoriert (Log: "Only one of elasticsearch.host_urls and network.host can be set, ignoring
       # elasticsearch.network.host") — darum hier NICHT gesetzt. Bei Connect-Fehler `logs channelfinder`.
       ELASTICSEARCH_HOST_URLS: http://elasticsearch:9200
-      # KEIN context-path-Env: CF 5.1.0 mappt seine Controller bereits NATIV unter /ChannelFinder/resources/...
+      # KEIN context-path-Env: CF (4.7.3-alpha wie 5.1.0) mappt NATIV unter /ChannelFinder/resources/... (code-level
+      # CHANNEL_RESOURCE_URI = "ChannelFinder/resources/…")
       # (empirisch verifiziert — ein zusätzliches SERVER_SERVLET_CONTEXT_PATH verdoppelt zu /ChannelFinder/ChannelFinder).
       # → Endpunkte liegen out-of-the-box auf /ChannelFinder/resources/channels = matcht Seed/Test/.mcp.json-Defaults.
     mem_limit: 1g
