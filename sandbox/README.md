@@ -301,6 +301,12 @@ stdio-MCP liest Env **nur beim Start** → wirkt erst im **neuen Claude-Fenster*
 - **Regression:** `EPICS_SANDBOX=1 EPICS_MCP_PROVIDER=pva EPICS_PVA_NAME_SERVERS=127.0.0.1:5075 EPICS_PVA_AUTO_ADDR_LIST=NO EPICS_PVA_ADDR_LIST=127.0.0.1 uv run pytest -m live`.
 - **Finale MCP-Tool-DoD (frisches Fenster):** `mcp__epics-pv__get_pv_value("FBIS-DLN01:Ctrl-EVR-01:12VValue")`;
   nach Phase B `find_channels(...)` / `find_device(...)`.
+- **⚠ CI-Caveat — die ESS-Treue lebt NUR lokal:** Die `-m live`-Tests laufen ausschließlich gegen diese
+  laufende Sandbox; GitHub-CI fährt `pytest -m "not live"` und **überspringt** sie. CI beweist damit die
+  Funktions-Logik der Reader (ChannelFinder-/Archiver-/Alarm-Parsing), **nicht**, dass sie gegen die
+  ESS-Prod-Versionen (CF 4.7.3, Archiver 2.1.1, Alarm 5.0.052, ES 8.11.3/8.5.3) korrekt verdrahtet sind —
+  diese Treue wird einzig hier, lokal, gegen den realen Stack re-verifiziert. Zuletzt **2026-06-30 (GR-Abschluss):**
+  alle live-relevanten epics-pv-Tools grün, inkl. `get_pv_history`→retrieval:17668 end-to-end (`val=12`).
 
 ## Herunterfahren
 
