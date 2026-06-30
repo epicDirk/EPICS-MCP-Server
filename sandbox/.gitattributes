@@ -4,3 +4,11 @@
 fetch_alarm_artifacts.sh   text eol=lf
 alarm-server/Dockerfile    text eol=lf
 alarm-logger/Dockerfile    text eol=lf
+
+# P5 — ESS-Archiver-Build-Dateien (decision GR / Option C): gleiche LF-Lehre. Das fetch-Skript bräche
+# unter bash mit CRLF (\r); CRLF in Dockerfile-RUN/entrypoint-Shebang ist fragil; der GANZE archiver/-
+# Build-Kontext (inkl. der per `sed` gerenderten server.xml.tmpl + den Config-Dateien) bleibt LF.
+# Der 340-MB-Tarball ist binär (Override gegen die text-Regel; ohnehin gitignored).
+fetch_archiver_artifact.sh   text eol=lf
+archiver/*                   text eol=lf
+archiver/*.tar.gz            binary

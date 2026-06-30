@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+  ESS server.xml — de-Jinja'd aus ics-ans-role-epicsarchiverap templates/server.xml.j2 @ v2.1.0.
+  entrypoint.sh ersetzt @SERVER_PORT@ (Shutdown 16001-16004), @CONNECTOR_PORT@ (HTTP 17665-17668)
+  und @MAXHDR@ (nur mgmt: maxHttpHeaderSize="100000", sonst leer) pro INSTANCE.
+-->
+<Server port="@SERVER_PORT@" shutdown="SHUTDOWN">
+  <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+
+  <GlobalNamingResources>
+    <Resource name="UserDatabase" auth="Container"
+              type="org.apache.catalina.UserDatabase"
+              description="User database that can be updated and saved"
+              factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+              pathname="conf/tomcat-users.xml" />
+  </GlobalNamingResources>
+
+  <Service name="Catalina">
+
+    <Connector port="@CONNECTOR_PORT@" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443"
+               compression="on"
+               compressibleMimeType="text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json,application/xml,application/json,application/x-protobuf"
+               @MAXHDR@
+               />
+
+    <Engine name="Catalina" defaultHost="localhost">
+
+      <Realm className="org.apache.catalina.realm.LockOutRealm">
+        <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+               resourceName="UserDatabase"/>
+      </Realm>
+
+      <!-- Deployment is handled by the entrypoint (autoDeploy=false), like the ESS role -->
+      <Host name="localhost" appBase="webapps" autoDeploy="false">
+
+        <Valve className="org.apache.catalina.valves.AccessLogValve"
+          directory="logs" prefix="access" suffix=".log"
+          rotatable="false" resolveHosts="false"
+          requestAttributesEnabled="true"
+          conditionUnless="ignore-access-log" encoding="utf-8"
+          pattern='%h %l %u %t "%r" %s %b "%{Referer}i" "%{User-agent}i" %D "%S" "%{Location}o"' />
+
+      </Host>
+    </Engine>
+  </Service>
+</Server>

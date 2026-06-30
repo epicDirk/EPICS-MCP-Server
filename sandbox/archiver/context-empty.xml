@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+  ESS context.xml für engine/etl/retrieval — de-Jinja'd aus templates/context.xml.j2 @ v2.1.0
+  (ohne jdbc/archappl-Pool: der gehört nur mgmt). DB-Zugriff dieser Webapps läuft über die
+  bpl-URLs der Appliance, nicht über einen eigenen JDBC-Pool.
+-->
+<Context>
+    <WatchedResource>WEB-INF/web.xml</WatchedResource>
+</Context>

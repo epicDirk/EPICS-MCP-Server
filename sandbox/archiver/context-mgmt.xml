@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+  ESS context.xml für die mgmt-Instanz — de-Jinja'd aus templates/context.xml.j2 @ v2.1.0.
+  Der jdbc/archappl-Pool existiert NUR auf mgmt (ESS gated ihn auf max_http_header_size, das nur
+  mgmt setzt). url-Host = archiver-mariadb (Bridge-Service). Driver com.mysql.jdbc.Driver (Connector/J
+  5.1.48) spricht MariaDB 10.x über mysql_native_password (MariaDB-Default-Auth). Sandbox-Test-Creds.
+  removeAbandonedTimeout = epicsarchiverap_db_timeout (300).
+-->
+<Context>
+
+    <WatchedResource>WEB-INF/web.xml</WatchedResource>
+
+    <Resource name="jdbc/archappl"
+         auth="Container"
+         type="javax.sql.DataSource"
+         factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+         testWhileIdle="true"
+         testOnBorrow="true"
+         testOnReturn="false"
+         validationQuery="SELECT 1"
+         validationInterval="30000"
+         timeBetweenEvictionRunsMillis="30000"
+         maxActive="10"
+         minIdle="2"
+         maxWait="10000"
+         initialSize="2"
+         removeAbandonedTimeout="300"
+         removeAbandoned="true"
+         logAbandoned="true"
+         minEvictableIdleTimeMillis="30000"
+         jmxEnabled="true"
+         driverClassName="com.mysql.jdbc.Driver"
+         url="jdbc:mysql://archiver-mariadb:3306/archappl"
+         username="archappl"
+         password="archappl"
+     />
+</Context>

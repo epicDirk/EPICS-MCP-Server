@@ -17,8 +17,9 @@ ESS-Produktion NICHT. Zur **Laufzeit kein ESS-Kontakt** (nur der einmalige Image
 | **`elasticsearch`** (**Phase B / M1 — da**) | Backend für ChannelFinder (`:8.18.0`, single-node, xpack-security off) | 9200 |
 | **`channelfinder`** (**Phase B / M1 — da**) | PV-Verzeichnis (REST), `ghcr.io/channelfinder/channelfinderservice:ChannelFinder-5.1.0`; API nativ unter `/ChannelFinder/resources/…` | 8080 |
 | **`recceiver`** (**Phase B / M2 — LIVE, ESS-Bau VOLL**) | recsync 1.8 + die 4 ESS-Patches (`pyproj`/`cfstore`/`expandvars`/`channelowner`) + gepinnte requirements + multi-stage venv (wortgetreu `ics-docker/recceiver`, decision GR/P3); empfängt die reccaster-Records des `test-ioc` → schreibt sie auto nach CF | — (container-intern, UDP 5049) |
-| **`archiver`** (**Phase C / C-1 — LIVE**) | EPICS Archiver Appliance (`pklaus/archiver-appliance`, single-JVM, Redis-Persistence statt MariaDB); archiviert die `test-ioc`-PVs **per CA über die Bridge** → aktiviert `is_archived`/`get_pv_history` | 17665 |
-| **`archiver-redis`** (**Phase C / C-1**) | Config-Persistenz des Archivers (ersetzt MariaDB) | — (container-intern, 6379) |
+| **`archiver-mariadb`** (**Phase C / C-1 — ESS 2.1.1**) | Config-/PVTypeInfo-DB (`mariadb:10.11`, db/user/pw `archappl`, charset utf8mb3); DDL via `/docker-entrypoint-initdb.d/` | — (container-intern, 3306) |
+| **`archiver-mgmt`** (**Phase C / C-1 — ESS 2.1.1**) | Appliance **mgmt**-Webapp (Hazelcast-Cluster-**Server**, bootet zuletzt) → `is_archived` + Seed `archivePV` | 17665 |
+| **`archiver-engine` / `-etl` / `-retrieval`** (**Phase C / C-1**) | Appliance **engine** (schreibt STS, CA→`test-ioc`) / **etl** (STS→MTS→LTS) / **retrieval** (`get_pv_history`) — Hazelcast-Clients | retrieval **17668** (host); engine/etl container-intern |
 
 ### ChannelFinder hochfahren (M1 — Seed-first)
 
@@ -134,36 +135,51 @@ docker build --build-arg HTTPS_PROXY=http://host.docker.internal:8899 `
 Pakete (gemessen): epics-base 7.0.9 + pvxs 1.5 (conda-forge), require 6.0.0 + essioc 2.1.9 + autosave 6.0
 + caputlog 4.1 + iocstats 4.0 + recsync 1.8 (ess-conda-local). Artifactory-Details: [`docs/ess-gitlab-and-datasets.md`](../../docs/ess-gitlab-and-datasets.md) + [`local-services-research/SOURCES-and-artifactory.md`](../../analysis/epics-mcp-daily-work/local-services-research/SOURCES-and-artifactory.md).
 
-## Phase C / C-1 — Archiver Appliance (`is_archived` / `get_pv_history`)
+## Phase C / C-1 — Archiver Appliance 2.1.1 (`is_archived` / `get_pv_history`)
 
-Lokale **EPICS Archiver Appliance** (`pklaus/archiver-appliance`, single-JVM, **Redis**-Persistence statt
-MariaDB) auf `:17665`. Der MCP-Client (`archiver_client.py`) + die Tools `is_archived`/`get_pv_history`
-existieren bereits — sie „leuchten auf", sobald `EPICS_MCP_ARCHIVER_URL=http://localhost:17665` gesetzt ist
-(`.mcp.json` → **neues Fenster**). Die Archiver-Engine ist **CA-nativ** (2019er Build) und erreicht das
-`test-ioc` **per CA über die Bridge** (Container→Container; der WSL2-NAT-Befund unten betrifft NUR
-Host-Windows→Container) — live verifiziert (`connectionState:true`).
+**ESS-Prod-Stand (decision GR / Option C, P5):** EPICS **Archiver Appliance 2.1.1 + MariaDB + 4-Instanz-Tomcat**
+(mgmt 17665 / engine 17666 / etl 17667 / retrieval 17668), 1:1 zu `ics-ans-role-epicsarchiverap @ v2.1.0`.
+Löst den vorherigen `pklaus/archiver-appliance`-Bau (2019, Single-JVM, Redis) ab. EINE parametrisierte
+Image-Quelle (`archiver/Dockerfile`): WARs aus dem ESS-Release-Artefakt `archappl_v2.1.1.tar.gz` (am **Host**
+gezogen via `sandbox/fetch_archiver_artifact.sh` → COPY, weil der Build-Container Artifactory nicht erreicht);
+Tomcat **9.0.85** + JDK **21** aus dem offiziellen `tomcat:9.0.85-jre21-temurin-jammy`; Connector/J **5.1.48**
+aus Maven Central. Die 4 Webapps bilden EINE Appliance (gemeinsames `ARCHAPPL_MYIDENTITY=appliance0`); nur
+**mgmt** bindet den Hazelcast-Cluster-Server (`:16670`), engine/etl/retrieval joinen als Clients → **mgmt
+bootet zuletzt**.
 
-**Hochfahren (gegated — vorher `docker ps` frisch):**
+**⚠ Zwei MCP-URLs (4-Instanz-Topologie):** `is_archived` trifft **mgmt** (`/mgmt/bpl`, `:17665`),
+`get_pv_history` trifft **retrieval** (`/retrieval/data`, `:17668`) — getrennte Tomcats, exakt wie
+`appliances.xml` zwei Endpunkte definiert (kein Front-Proxy in der ESS-Rolle). `.mcp.json` (→ **neues
+Fenster**): `EPICS_MCP_ARCHIVER_URL=http://localhost:17665` **und**
+`EPICS_MCP_ARCHIVER_RETRIEVAL_URL=http://localhost:17668`. (Single-JVM: `RETRIEVAL_URL` leer lassen → Fallback
+auf `ARCHIVER_URL`.)
+
+**Vorbereitung (Host, einmalig):** `bash sandbox/fetch_archiver_artifact.sh` (340 MB + sha256). Dann bauen:
+`docker compose -f sandbox/docker-compose.yml build archiver-mgmt` (das Image, 4× genutzt).
+
+**Hochfahren (gegated — vorher `docker ps` frisch; `--no-deps` schützt den Bestand):**
 
 ```powershell
 docker ps                                                                              # frisch (Multi-Window!)
-docker compose -f sandbox/docker-compose.yml up -d --no-deps archiver-redis archiver   # --no-deps: Bestand unberührt
-# ~1-2 Min Anlauf (4 Webapps in einem Tomcat), dann:
+# Reihenfolge: mariadb (DDL-Init) → 3 Clients → mgmt (Cluster-Server, zuletzt):
+docker compose -f sandbox/docker-compose.yml up -d --no-deps archiver-mariadb
+docker compose -f sandbox/docker-compose.yml up -d --no-deps archiver-engine archiver-etl archiver-retrieval
+docker compose -f sandbox/docker-compose.yml up -d --no-deps archiver-mgmt
 curl -fs http://localhost:17665/mgmt/bpl/getApplianceInfo                              # appliance up
 EPICS-MCP-Server\.venv\Scripts\python.exe sandbox/seed/archive_evr_pvs.py             # 5 EVR-PVs anmelden + pollen
-# Status-Reise: "Appliance assigned" -> (Initial sampling, paar Min) -> "Being archived":
-curl -fs "http://localhost:17665/mgmt/bpl/getPVStatus?pv=FBIS-DLN01:Ctrl-EVR-01:12VValue"
+curl -fs "http://localhost:17665/mgmt/bpl/getPVStatus?pv=FBIS-DLN01:Ctrl-EVR-01:12VValue"   # → "Being archived"
+curl -fs "http://localhost:17668/retrieval/data/getData.json?pv=FBIS-DLN01:Ctrl-EVR-01:12VValue&from=...&to=..."  # retrieval :17668!
 ```
 
 **⚠ Das Archiver-Set ist BEWUSST vom CF-Seed entkoppelt** (`seed/archive_evr_pvs.py`): es enthält `3V3Value`
 (nie-manuell-CF-geseedet, via recsync registriert) **statt** `CmdRst` — so beweist sich der Archiver-Pfad
-unabhängig vom CF-Seed.
+unabhängig vom CF-Seed. Der MariaDB-Persistenz-Wechsel verliert eine alte Registrierung → nach jedem
+DB-Volume-Wipe `archive_evr_pvs.py` erneut laufen (initdb.d läuft nur bei leerem Volume).
 
-**Verifikation (live bestätigt 2026-06-29):** alle 5 EVR-PVs (`12VValue`/`Temp1Value`/`EvtACnt-I`/`3V3Value`/
-`BMod`) → `Being archived`; `getData.json` 12VValue → `val=12.0` (EGU V, PREC 2). Beide Images digest-gepinnt
-nach Verify. **MCP-Tool-DoD (neues Fenster):** `is_archived("FBIS-DLN01:Ctrl-EVR-01:12VValue")` →
-`{enabled:true, archived:true}`; `get_pv_history(…, <ISO from>, <ISO to>)` → `total>0`, `val≈12.0`. Optionaler
-Live-Test hinter `EPICS_SANDBOX_ARCHIVER=1`.
+**MCP-Tool-DoD (neues Fenster):** `is_archived("FBIS-DLN01:Ctrl-EVR-01:12VValue")` → `{enabled:true,
+archived:true}` (mgmt); `get_pv_history(…, <ISO from>, <ISO to>)` → `total>0`, `val≈12.0` (retrieval :17668).
+PIN-AFTER-VERIFY: archiver-Image self-built (Base `@sha256` + Artefakt-/Connector-sha256 im Dockerfile);
+`mariadb:10.11` nach Verify `@sha256` pinnen.
 
 ## Phase C / C-2 — Phoebus-Alarm-Stack (`is_alarm_configured`)
 

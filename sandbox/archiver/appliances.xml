@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+  ESS EPICS Archiver Appliance — Docker-Sandbox-Übersetzung von
+  ics-ans-role-epicsarchiverap templates/appliances.xml.j2 @ v2.1.0 (Standalone-Pfad,
+  decision GR / Option C, P5).
+
+  ESS-Prod fährt alle 4 Webapps auf EINER VM (ein Host-IP, eine Identity = short hostname).
+  In Docker laufen die 4 Webapps auf 4 Bridge-Hostnamen (archiver-mgmt/engine/etl/retrieval),
+  darum zeigt jede URL auf ihren eigenen Service-Hostnamen. EINE Appliance → EINE gemeinsame
+  Identity (ARCHAPPL_MYIDENTITY=appliance0 auf allen 4 Containern, gesetzt im compose).
+
+  cluster_inetport-Host = archiver-mgmt: nur mgmt bindet den Hazelcast-Cluster-Server (:16670),
+  engine/etl/retrieval verbinden sich als Hazelcast-Clients dorthin (DefaultConfigService.java:
+  nur MGMT ruft Hazelcast.newHazelcastInstance, die anderen HazelcastClient.newHazelcastClient).
+  Die Webapp-Rolle kommt aus dem Servlet-Context-Path (/mgmt→MGMT …), NICHT aus der Identity.
+-->
+<appliances>
+  <appliance>
+    <identity>appliance0</identity>
+    <cluster_inetport>archiver-mgmt:16670</cluster_inetport>
+    <mgmt_url>http://archiver-mgmt:17665/mgmt/bpl</mgmt_url>
+    <engine_url>http://archiver-engine:17666/engine/bpl</engine_url>
+    <etl_url>http://archiver-etl:17667/etl/bpl</etl_url>
+    <retrieval_url>http://archiver-retrieval:17668/retrieval/bpl</retrieval_url>
+    <data_retrieval_url>http://archiver-retrieval:17668/retrieval</data_retrieval_url>
+  </appliance>
+</appliances>
