@@ -25,14 +25,32 @@ fresh-measurement-wins, hier dokumentiert statt stillschweigend aufgelöst:
   `is_alarm_configured`=true; curl CF/retrieval/logger = 200/200/400). Die alte compose-Notiz
   „NIE 127.0.0.1 auf WSL2" ist **widerlegt**. Die Sandbox ist damit **nicht mehr vom ESS-LAN
   erreichbar** (nur Windows-Loopback).
-- **Egress-Hälfte offen (in Klärung):** EPICS-Clients sind bereits bridge-gescoped (Audit = no-emit:
-  Archiver `CA_ADDR_LIST=test-ioc`/`AUTO=no`, Alarm `PVA_NAME_SERVERS=test-ioc:5075`/`AUTO=NO`). Ein
-  hartes **generisches** Egress-Verbot braucht eine OS-Ebene (Windows-Firewall); deren Wirksamkeit
-  gegen **WSL2**-Egress auf **Win10** ist unsicher (Hyper-V-Firewall erst Win11 22H2+) → eigener
-  Entscheidungs-/Verify-Schritt, NICHT blind anwenden.
+- **Egress-Hälfte — RESOLVED (Dirk-Anliegen präzisiert + Multi-Agent-Research):** Dirks eigentliche Sorge
+  ist nicht „generischer Egress", sondern **kein Service darf sich im ESS-Netz anmelden/ankündigen** (jemand
+  hält den Sandbox-Archiver/-IOC für den offiziellen). Das ist erfüllt:
+  1. **Inbound 127.0.0.1 (oben)** → kein ESS-Host kann einen Sandbox-Service erreichen/sehen.
+  2. **Announcement-Audit aller Services = kein ESS-Announce:** Archiver-Hazelcast = TCP/IP per Hostname
+     (kein Multicast); ES `discovery.type: single-node`; Kafka `ADVERTISED_LISTENERS` nur bridge-intern;
+     CF/Alarm passive REST + PVA→`test-ioc` gescoped; recsync `255.255.255.255:5049` Limited-Broadcast (RFC
+     919/922, nie geroutet) → **lokale** CF; **kein** Multicast/mDNS/zeroconf (grep = 0).
+  3. **IOC-Beacon-Scoping APPLIED + verifiziert (Option 2 = „Extra-Schloss"):** der IOC sendet CA/PVA-Server-
+     Beacons jetzt explizit nur an `127.0.0.1` (`EPICS_CAS_AUTO_BEACON_ADDR_LIST=NO` + `…_BEACON_ADDR_LIST=
+     127.0.0.1`, dito PVAS) → kann seine PV-Identität NIE auf ein routbares/ESS-Segment ankündigen. Datenpfad
+     unberührt (`get_pv_value`=12, `is_archived`/`is_alarm_configured` grün — Clients verbinden per addr-list/
+     name-server, nicht via Beacon).
+- **Harter generischer Egress-Block — RECHERCHIERT, bewusst NICHT gebaut (Dirk Option 2):** 5-Agenten-Research
+  (high-confidence): auf **Win10/WSL2** sind Hyper-V-Firewall + `.wslconfig`-firewall (Win11-22H2+-only),
+  Defender-Outbound (fängt WSL2-forwarded nicht) und `enable_ip_masquerade=false` (entfernt nur NAT, +
+  Docker-Desktop-Double-NAT) **wirkungslos**. **Einzig wirksam:** ein `DOCKER-USER`-Chain scoped DROP
+  (`-s 172.21.0.0/16 -o eth0 -j DROP`) **in** der docker-desktop-VM (voller Block, Publishing bleibt) — aber
+  **keine Persistenz** (Docker-Restart wiped ihn → braucht einen privileged `restart:always`-Sidecar). Für eine
+  lokale Test-Sandbox, deren Laufzeit-Egress schon auditiert no-emit + EPICS-gescoped ist, als **überdimensioniert
+  bewertet** (Dirk). Bauanleitung steht für später bereit (s. §7-Kandidat unten / Research-Verdikt). ⚠ Falle aus
+  dem Research: **nie** bare `-o eth0 -j DROP` (killt die Docker-Control-Plane), strikt `-s <bridge>` scopen.
 
-> Die §2-„bewiesen"-Tabelle unten gilt nur noch für die **127.0.0.1-Zeile**; die `internal:true`-Zeile
-> ist durch obige Messung **widerlegt**.
+> **GW-STATUS: abgeschlossen (Option 2).** Inbound zu + Announcement dicht (inkl. Beacon-Scoping); der harte
+> Egress-Block ist verfügbar, aber bewusst nicht gebaut. Die §2-„bewiesen"-Tabelle gilt nur für die
+> **127.0.0.1-Zeile**; die `internal:true`-Zeile ist **widerlegt**.
 
 ---
 

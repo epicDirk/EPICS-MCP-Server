@@ -7,10 +7,16 @@ ESS-Produktion (VPN-gated). ✅ **Inbound-Isolation (decision GW, 2026-06-30):**
 die `127.0.0.1`-Ports voll, auch PVA :5075). Damit ist auch die frühere Schreib-Exposition entschärft:
 die 2 ASG-DEFAULT-Records `Temp1ThrUpCrt-SP`/`CmdRst` sind jetzt **nur noch über den Windows-Host**
 erreichbar (vorher von jedem LAN-Host; `field(ASG,"private")` schützt die 7 Readbacks weiterhin am IOC).
-⚠️ **Egress** (kein Rausfunken ins ESS-Netz) bleibt ein **offener, separater Schritt** — `internal:true`
-ist auf diesem Win10/WSL2-Host **infeasibel** (kappt das Port-Publishing, s. `ISOLATION-PLAN.md`
-§Anwendungs-Ergebnis); die EPICS-Clients sind aber bereits bridge-gescoped (Audit = no-emit). Zur
-**Laufzeit kein aktiver ESS-Kontakt** (nur der einmalige Image-Build zieht e3-Pakete, s. u.).
+✅ **Kein Service kündigt sich im ESS-Netz an (decision GW abgeschlossen):** Announcement-Audit aller
+Services = kein ESS-Announce (Archiver-Hazelcast TCP/IP-per-Hostname/kein Multicast, ES `single-node`,
+Kafka advertised bridge-intern, recsync Limited-Broadcast → lokale CF, kein mDNS); **IOC-Server-Beacons
+explizit auf `127.0.0.1` gescoped** (`EPICS_CAS/PVAS…BEACON_ADDR_LIST`, AUTO=NO) → der IOC kann seine
+PV-Identität nie auf ein routbares/ESS-Segment ankündigen. Ein **harter** generischer Egress-Block ist
+auf Win10/WSL2 nur als `DOCKER-USER`-DROP-in-VM möglich (Hyper-V-Firewall/`.wslconfig`/Defender-Outbound
+sind Win11-only bzw. wirkungslos; `internal:true` kappt das Publishing) — **recherchiert, aber bewusst
+nicht gebaut** (bräuchte einen privileged `restart:always`-Sidecar; für eine no-emit-auditierte Test-Sandbox
+überdimensioniert). Details: `ISOLATION-PLAN.md` §Anwendungs-Ergebnis. Zur **Laufzeit kein aktiver
+ESS-Kontakt** (nur der einmalige Image-Build zieht e3-Pakete, s. u.).
 
 ## Komponenten
 

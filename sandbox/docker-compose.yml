@@ -32,6 +32,15 @@ services:
     # iocsh liest stdin; ohne (pseudo-)TTY bekäme es EOF und der Container endete.
     stdin_open: true
     tty: true
+    # decision GW (Option 2 = "Extra-Schloss"): EPICS-Server-Beacons explizit auf Loopback scopen + AUTO aus
+    # → der IOC kann seine PV-Identität (FBIS-DLN01:Ctrl-EVR-01) NIE auf ein routbares/ESS-Segment beaconen
+    # (vorher nur implizit L2-contained). Datenpfad unberührt: Clients verbinden per explizitem addr-list/
+    # name-server (Archiver CA→test-ioc, Alarm+MCP PVA→name-server :5075), NICHT via Beacon-Discovery.
+    environment:
+      EPICS_CAS_AUTO_BEACON_ADDR_LIST: "NO"
+      EPICS_CAS_BEACON_ADDR_LIST: "127.0.0.1"
+      EPICS_PVAS_BEACON_ADDR_LIST: "127.0.0.1"
+      EPICS_PVA_AUTO_ADDR_LIST: "NO"
     ports:
       # 127.0.0.1-Bind = nur Windows-Loopback erreichbar, NICHT vom ESS-LAN (decision GW, Inbound-Isolation).
       # Empirisch verifiziert 2026-06-30: der native Windows-MCP erreicht diese Ports (auch PVA :5075) —
