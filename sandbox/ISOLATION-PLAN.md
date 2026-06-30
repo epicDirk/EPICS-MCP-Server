@@ -8,6 +8,34 @@
 
 ---
 
+## ⚠ ANWENDUNGS-ERGEBNIS (2026-06-30) — Plan durch frische Messung teil-korrigiert
+
+Beim Anwenden (Dirks OK) hat die **frische Messung den „bewiesenen" Fix teilweise widerlegt** —
+fresh-measurement-wins, hier dokumentiert statt stillschweigend aufgelöst:
+
+- **`internal: true` ist auf diesem Docker-Desktop/WSL2-Host INFEASIBEL:** es unterdrückt das
+  Host-Port-Publishing komplett (nach dem Recreate zeigt `docker ps` nur `17665/tcp` **ohne**
+  Host-Binding, curl vom Host = **000** auf ALLE MCP-Ports → der `epics-pv`-MCP wäre tot). Der
+  Wegwerf-Test in §2 bildete das echte Multi-Service-Publishing nicht ab. **→ Egress-Air-Gap via
+  `internal:true` ist NICHT mit „lokal nutzbar" vereinbar; off the table.** (Grund: Publishing auf
+  Docker Desktop braucht ein nicht-internal Netz; ein nicht-internal Netz gibt dem Container eine
+  Default-Route — beides zugleich geht am Docker-Layer nicht.)
+- **127.0.0.1-Binds funktionieren dagegen voll — Inbound-Isolation APPLIED + verifiziert:** der
+  native Windows-MCP erreicht alle Ports inkl. **PVA :5075** (`get_pv_value`=12, `is_archived`=true,
+  `is_alarm_configured`=true; curl CF/retrieval/logger = 200/200/400). Die alte compose-Notiz
+  „NIE 127.0.0.1 auf WSL2" ist **widerlegt**. Die Sandbox ist damit **nicht mehr vom ESS-LAN
+  erreichbar** (nur Windows-Loopback).
+- **Egress-Hälfte offen (in Klärung):** EPICS-Clients sind bereits bridge-gescoped (Audit = no-emit:
+  Archiver `CA_ADDR_LIST=test-ioc`/`AUTO=no`, Alarm `PVA_NAME_SERVERS=test-ioc:5075`/`AUTO=NO`). Ein
+  hartes **generisches** Egress-Verbot braucht eine OS-Ebene (Windows-Firewall); deren Wirksamkeit
+  gegen **WSL2**-Egress auf **Win10** ist unsicher (Hyper-V-Firewall erst Win11 22H2+) → eigener
+  Entscheidungs-/Verify-Schritt, NICHT blind anwenden.
+
+> Die §2-„bewiesen"-Tabelle unten gilt nur noch für die **127.0.0.1-Zeile**; die `internal:true`-Zeile
+> ist durch obige Messung **widerlegt**.
+
+---
+
 ## 1. Befund (warum das nötig ist)
 
 **Outbound HEUTE = nein** (auditiert, nicht angenommen):

@@ -1,13 +1,16 @@
 # Lokale EPICS-Service-Sandbox
 
 Lokale Services in Docker, gelesen vom **read-only** `epics-pv`-MCP gegen echte Services — **ohne**
-ESS-Produktion (VPN-gated). ⚠️ **Netzwerk ehrlich:** die Docker-Ports binden **`0.0.0.0`/`[::]`**
-(WSL2-NAT-Erfordernis, s. „Netzwerk-Befund" unten) → die Sandbox-PVs sind im **LAN erreichbar** (für ein
-lokales Test-/Sim-IOC akzeptabel). **Schreib-Asymmetrie ehrlich:** die 7 Readbacks tragen
-`field(ASG,"private")` (LAN-**lesbar**, am IOC read-only), aber die 2 ASG-DEFAULT-Records
-`Temp1ThrUpCrt-SP`/`CmdRst` sind von **jedem LAN-Host SCHREIBBAR** (`asCheckClientIP` filtert sie nicht).
-Die **MCP-seitige** `127.0.0.1`-Isolation (addr-list) bleibt davon **unberührt** — der MCP erreicht
-ESS-Produktion NICHT. Zur **Laufzeit kein ESS-Kontakt** (nur der einmalige Image-Build zieht e3-Pakete, s. u.).
+ESS-Produktion (VPN-gated). ✅ **Inbound-Isolation (decision GW, 2026-06-30):** die Docker-Ports binden
+**`127.0.0.1`** (nur Windows-Loopback) → die Sandbox ist **NICHT mehr vom ESS-LAN erreichbar**. Die alte
+„0.0.0.0 ist WSL2-NAT-Pflicht"-Behauptung ist **empirisch widerlegt** (der native Windows-MCP erreicht
+die `127.0.0.1`-Ports voll, auch PVA :5075). Damit ist auch die frühere Schreib-Exposition entschärft:
+die 2 ASG-DEFAULT-Records `Temp1ThrUpCrt-SP`/`CmdRst` sind jetzt **nur noch über den Windows-Host**
+erreichbar (vorher von jedem LAN-Host; `field(ASG,"private")` schützt die 7 Readbacks weiterhin am IOC).
+⚠️ **Egress** (kein Rausfunken ins ESS-Netz) bleibt ein **offener, separater Schritt** — `internal:true`
+ist auf diesem Win10/WSL2-Host **infeasibel** (kappt das Port-Publishing, s. `ISOLATION-PLAN.md`
+§Anwendungs-Ergebnis); die EPICS-Clients sind aber bereits bridge-gescoped (Audit = no-emit). Zur
+**Laufzeit kein aktiver ESS-Kontakt** (nur der einmalige Image-Build zieht e3-Pakete, s. u.).
 
 ## Komponenten
 

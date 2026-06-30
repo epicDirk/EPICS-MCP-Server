@@ -33,11 +33,13 @@ services:
     stdin_open: true
     tty: true
     ports:
-      # 0.0.0.0-Bind (NIE "127.0.0.1:") — sonst erreicht der native Windows-MCP den Port auf WSL2 nicht.
-      - "5064:5064"       # CA server TCP + name-server-TCP
-      - "5064:5064/udp"   # CA search UDP
-      - "5065:5065/udp"   # CA beacon UDP
-      - "5075:5075"       # PVA TCP + name-server-TCP (der funktionierende Pfad host->container)
+      # 127.0.0.1-Bind = nur Windows-Loopback erreichbar, NICHT vom ESS-LAN (decision GW, Inbound-Isolation).
+      # Empirisch verifiziert 2026-06-30: der native Windows-MCP erreicht diese Ports (auch PVA :5075) —
+      # die alte "NIE 127.0.0.1 auf WSL2"-Warnung ist WIDERLEGT. `internal:true` geht NICHT (kappt das Publishing).
+      - "127.0.0.1:5064:5064"       # CA server TCP + name-server-TCP
+      - "127.0.0.1:5064:5064/udp"   # CA search UDP
+      - "127.0.0.1:5065:5065/udp"   # CA beacon UDP
+      - "127.0.0.1:5075:5075"       # PVA TCP + name-server-TCP (der funktionierende Pfad host->container)
     restart: "no"
 
   # --- Phase B / M1: ChannelFinder + Elasticsearch ---------------------------------------------
@@ -72,7 +74,7 @@ services:
       retries: 20
       start_period: 60s
     ports:
-      - "9200:9200"       # nur Debug
+      - "127.0.0.1:9200:9200"       # nur Debug
     restart: "no"
 
   channelfinder:
@@ -110,7 +112,7 @@ services:
       retries: 12
       start_period: 30s
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     restart: "no"
 
   # --- Phase B / M2: recceiver (essioc → reccaster → recceiver → ChannelFinder Auto-Populate) ------
@@ -273,7 +275,7 @@ services:
       retries: 30
       start_period: 60s
     ports:
-      - "17668:17668"       # retrieval-REST (MCP get_pv_history → EPICS_MCP_ARCHIVER_RETRIEVAL_URL)
+      - "127.0.0.1:17668:17668"       # retrieval-REST (MCP get_pv_history → EPICS_MCP_ARCHIVER_RETRIEVAL_URL)
     restart: "no"
 
   # mgmt = Hazelcast-Cluster-SERVER → bootet ZULETZT (depends_on die 3 Clients als service_started).
@@ -314,7 +316,7 @@ services:
       retries: 30
       start_period: 90s
     ports:
-      - "17665:17665"       # mgmt-REST (MCP is_archived + Seed archivePV → EPICS_MCP_ARCHIVER_URL)
+      - "127.0.0.1:17665:17665"       # mgmt-REST (MCP is_archived + Seed archivePV → EPICS_MCP_ARCHIVER_URL)
     restart: "no"
 
   # --- Phase C / C-2: Phoebus-Alarm-Stack (Kafka KRaft + ES + alarm-server + alarm-logger) -------
@@ -399,7 +401,7 @@ services:
       retries: 20
       start_period: 60s
     ports:
-      - "9201:9200"       # nur Debug (CF-ES besitzt 9200)
+      - "127.0.0.1:9201:9200"       # nur Debug (CF-ES besitzt 9200)
     restart: "no"
 
   alarm-logger:
@@ -431,7 +433,7 @@ services:
       retries: 20
       start_period: 60s
     ports:
-      - "8081:8080"       # Logger-REST (CF besitzt 8080)
+      - "127.0.0.1:8081:8080"       # Logger-REST (CF besitzt 8080)
     restart: "no"
 
   alarm-server:
