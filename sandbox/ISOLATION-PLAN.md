@@ -205,9 +205,13 @@ Nach dem Recreate die jetzt **veralteten** Aussagen in `sandbox/README.md` richt
 ## 8. Stehende Invariante (für jede künftige Sandbox-Änderung)
 
 Die Isolation ist ab Anwenden eine **Invariante**: jede künftige Compose-/Netz-Änderung MUSS sie erhalten —
-**kein** `network_mode: host`, **kein** `macvlan`/`ipvlan` auf einem ESS-Subnetz, **keine** `0.0.0.0`-Port-Binds,
-EPICS-addr-lists/Beacon-Listen **bridge-scoped**, der Bridge bleibt `internal: true`. Das ist die #1-Sache, die bei
-jedem Compose-Diff zu prüfen ist.
+**kein** `network_mode: host`, **kein** `macvlan`/`ipvlan` auf einem ESS-Subnetz, **keine** `0.0.0.0`-Port-Binds
+(alle Ports `127.0.0.1`-gebunden = Inbound-Sperre), **kein** `EPICS_*_INTF_ADDR_LIST=127.0.0.1` (Datenpfad-Killer —
+s. INTF-Falle §QA oben), EPICS-addr-lists/Beacon-Listen **bridge-/loopback-scoped** (`EPICS_*_AUTO_BEACON_ADDR_LIST=NO`
++ `*_BEACON_ADDR_LIST=127.0.0.1`). **`internal: true` ist NICHT Teil der Invariante** — es ist auf diesem
+Docker-Desktop/WSL2-Host **infeasibel** (kappt das Port-Publishing → §11 „Anwendungs-Ergebnis" oben); die
+Erreichbarkeits-Sperre leistet die 127.0.0.1-**Inbound**-Isolation, nicht ein air-gapped Bridge. Das ist die
+#1-Sache, die bei jedem Compose-Diff zu prüfen ist.
 
 ---
 

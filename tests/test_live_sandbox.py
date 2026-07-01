@@ -41,6 +41,15 @@ _SKIP_RECSYNC_REASON = (
     "um den reccaster-Auto-Populate-Test zu fahren"
 )
 
+# Beide cf_unregistered-Tests brauchen den angehobenen CF-Cap: gegen das ~576-Kanal-EVR-Prefix
+# withholdet der CF-Checker beim Default 500 (cf_unregistered → []). Ohne diesen Guard erschiene das
+# als kryptische „len 0"-Assertion statt als aktionierbare Skip-Meldung (s. sandbox/README §CF-Cap).
+_CF_CAP_MIN = 2000
+_CF_CAP_SKIP_REASON = (
+    "EPICS_MCP_CHANNELFINDER_MAX_RESULTS=2000 setzen — der CF-Checker withholdet beim Default 500 "
+    "gegen das ~576-Kanal-EVR-Prefix (cf_unregistered → []); sonst bräche der Test mit „len 0“."
+)
+
 
 def _reset_epics_singletons() -> None:
     """Gecachte Config + p4p-Context verwerfen, damit der Test das aktuelle Shell-Env sieht.
@@ -157,7 +166,11 @@ async def test_cf_unregistered_w1_mechanism(tmp_path: Path) -> None:
     Schnell + deterministisch (winziges Inventar, ein CF-GET); KEINE 60-s-fbis-Walk.
     """
     _reset_epics_singletons()
+    from epics_pv_mcp.config import get_config
     from epics_pv_mcp.tools.crossplane import _crossplane_check
+
+    if get_config().channelfinder_max_results < _CF_CAP_MIN:
+        pytest.skip(_CF_CAP_SKIP_REASON)
 
     prefix = "FBIS-DLN01:Ctrl-EVR-01:"
     served_a = f"{prefix}12VValue"
@@ -230,6 +243,9 @@ async def test_cf_unregistered_w2_full_mirror_collapses_to_gap() -> None:
     from epics_pv_mcp.config import get_config
     from epics_pv_mcp.services.channelfinder_client import ChannelFinderClient
     from epics_pv_mcp.tools.crossplane import _crossplane_check
+
+    if get_config().channelfinder_max_results < _CF_CAP_MIN:
+        pytest.skip(_CF_CAP_SKIP_REASON)
 
     prefix = "FBIS-DLN01:Ctrl-EVR-01:"
 

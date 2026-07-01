@@ -293,6 +293,7 @@ stdio-MCP liest Env **nur beim Start** → wirkt erst im **neuen Claude-Fenster*
 | `EPICS_PVA_NAME_SERVERS` | `127.0.0.1:5075` |
 | `EPICS_MCP_ALLOW_PV_WRITE` | `true` (scoped Write-Ausnahme — s. u.) |
 | `EPICS_MCP_PV_WRITE_PATTERN` | `^FBIS-DLN01:Ctrl-EVR-01:(Temp1ThrUpCrt-SP\|CmdRst)$` |
+| `EPICS_MCP_CHANNELFINDER_MAX_RESULTS` | `2000` (hebt den CF-Cap für das ~576-Kanal-EVR-Prefix; Default 500 site-sicher — sonst withholdet der CF-Checker → `cf_unregistered`/W1/W2 brechen mit „len 0") |
 
 > ⚠️ `provider` ist EXKLUSIV (ca↔pva) → betrifft alle Fenster beim nächsten epics-pv-Start (Dirk OK 2026-06-28).
 >
