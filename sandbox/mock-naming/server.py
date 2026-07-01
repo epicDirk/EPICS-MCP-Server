@@ -13,8 +13,8 @@ Routes:
   HEAD /                         -> 200  (naming_client.check_connectivity() HEADs base_url)
 
 Seed: MOCK_NAMING_ACTIVE (comma-separated device names; default the sandbox device). Bind 0.0.0.0
-INSIDE the container so the published 127.0.0.1 host port reaches it (the host isolation is the
-127.0.0.1-publish in docker-compose, NOT a container loopback bind — same lesson as the IOC INTF trap).
+INSIDE the container so the published 127.0.0.1 host port reaches it — the host isolation is the
+127.0.0.1-publish in docker-compose, NOT a container loopback bind (same IOC INTF trap lesson).
 """
 from __future__ import annotations
 
