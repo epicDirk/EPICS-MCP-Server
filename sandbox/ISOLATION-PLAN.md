@@ -67,9 +67,13 @@ fresh-measurement-wins, hier dokumentiert statt stillschweigend aufgelöst:
   → Archiver/Alarm (Bridge-IP) und MCP (publizierter Port → Container-`eth0`) verlören die Verbindung → **Datenpfad kaputt**.
   Die Erreichbarkeits-Sperre leistet bei uns die **Inbound-Isolation** (Docker-`127.0.0.1`-Publish, oben bewiesen), NICHT
   INTF-Binding. Der IOC MUSS auf allen Container-Interfaces lauschen, damit die Sandbox-internen Clients ihn erreichen.
-- **Optionale Robustheit (nicht angewandt):** `EPICS_PVA_AUTO_ADDR_LIST=NO` wird von PVXS nur als **Fallback**-Name
-  konsumiert; server-kanonisch wäre `EPICS_PVAS_AUTO_BEACON_ADDR_LIST=NO` (eindeutig, nicht überschattbar). Aktuell
-  nachweislich wirksam → nur ein Klarheits-/Robustheits-Nice-to-have.
+- **Klarheits-Robustheit — ANGEWANDT (2026-07-01, EPICS-MCP `main`):** der IOC-Beacon-Var ist auf den
+  server-kanonischen Namen `EPICS_PVAS_AUTO_BEACON_ADDR_LIST=NO` umgestellt (vorher `EPICS_PVA_AUTO_ADDR_LIST=NO`,
+  das PVXS nur als **Fallback** konsumiert). Wirkung identisch, Name eindeutig/nicht überschattbar. Gegateter
+  IOC-Recreate (Dirks OK) → **re-verifiziert:** Datenpfad heil (`get_pv_value(…:12VValue)`=12, PVA-name-server);
+  **lo-Sniff** (IOC-netns): CA-Beacon `127.0.0.1:5065` + PVA-Beacon `127.0.0.1:5076` (loopback-gescoped);
+  **eth0/Bridge-Sniff:** null Beacons auf 5065/5076, nur die recsync-Announce `→255.255.255.255:5049`
+  (Positiv-Kontrolle = Sniffer lebt). Isolation hält mit dem sauberen Namen.
 
 ---
 

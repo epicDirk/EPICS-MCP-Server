@@ -40,7 +40,9 @@ services:
       EPICS_CAS_AUTO_BEACON_ADDR_LIST: "NO"
       EPICS_CAS_BEACON_ADDR_LIST: "127.0.0.1"
       EPICS_PVAS_BEACON_ADDR_LIST: "127.0.0.1"
-      EPICS_PVA_AUTO_ADDR_LIST: "NO"
+      # Server-kanonisch (PVXS liest EPICS_PVAS_AUTO_BEACON_ADDR_LIST als erste Präferenz; das
+      # client-präfigierte EPICS_PVA_AUTO_ADDR_LIST wäre nur Fallback). Wirkung identisch, Name sauber.
+      EPICS_PVAS_AUTO_BEACON_ADDR_LIST: "NO"
     ports:
       # 127.0.0.1-Bind = nur Windows-Loopback erreichbar, NICHT vom ESS-LAN (decision GW, Inbound-Isolation).
       # Empirisch verifiziert 2026-06-30: der native Windows-MCP erreicht diese Ports (auch PVA :5075) —
