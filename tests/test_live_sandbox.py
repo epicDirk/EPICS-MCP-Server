@@ -283,3 +283,108 @@ async def test_cf_unregistered_w2_full_mirror_collapses_to_gap() -> None:
     assert not any(">= 50%" in note for note in report["notes"]), (
         "Ratio-Caveat-Note vorhanden — cf_unregistered ist unerwartet groß (unvollständiges CF?)."
     )
+
+
+# --- Wedge 4: diagnose_connection gegen die Live-Sandbox (L1–L6) ---------------------------------
+
+# Ein echter Typo (nirgends referenziert/bedient) — auf dem PVA-Name-Server timeoutet er (der
+# §Name-Server-Timeout-Collapse), NIE PV_NOT_FOUND (das gäbe es nur bei UDP-Broadcast-Search).
+_PV_TYPO = "FBIS-DLN01:Ctrl-EVR-01:NoSuchPV12345"
+# Fremd-Prefix = nicht-laufendes IOC → IOC-down SIMULIEREN, ohne das test-ioc zu stoppen (andere
+# Live-Tests hängen dran).
+_PV_WRONG_PREFIX = "WRONG-DLN99:Ctrl-EVR-01:12VValue"
+
+
+@pytest.mark.skipif(_NO_SANDBOX, reason=_SKIP_REASON)
+async def test_diagnose_l1_served_pv_is_healthy() -> None:
+    """L1: eine bediente, verbundene PV → state=connected, likely_cause=healthy (kein Claim)."""
+    _reset_epics_singletons()
+    from epics_pv_mcp.services.diagnose import diagnose
+
+    report = await diagnose(_PV_ANALOG)
+    assert report.state == "connected"
+    assert report.likely_cause == "healthy"
+    # Ehrlichkeit: keine „einzige Quelle"/Uniqueness-Behauptung.
+    joined = " ".join(report.next_steps).lower()
+    assert "not uniqueness" in joined or "one responder" in joined
+
+
+@pytest.mark.skipif(_NO_CF, reason=_SKIP_CF_REASON)
+async def test_diagnose_l2_cf_gap_is_not_healthy_or_typo() -> None:
+    """L2: der CF-Gap (referenziert, nicht bedient, nicht in CF) → disconnected, nicht healthy/typo.
+
+    CF wird konsultiert und meldet registered=False; ohne lokales Naming kollabiert der Split auf
+    ``indeterminate`` (ehrliche Sandbox-Grenze — der unregistered/typo-Split braucht Naming).
+    """
+    _reset_epics_singletons()
+    from epics_pv_mcp.services.diagnose import diagnose
+
+    report = await diagnose(_W2_GAP, timeout=3.0)
+    assert report.state == "disconnected"
+    assert report.likely_cause not in {"healthy", "name_typo"}
+    assert report.likely_cause in {"indeterminate", "unregistered", "ioc_down"}
+    assert report.evidence.channelfinder.consulted is True
+    assert report.evidence.channelfinder.registered is False
+
+
+@pytest.mark.skipif(_NO_SANDBOX, reason=_SKIP_REASON)
+async def test_diagnose_l3_typo_collapses_to_timeout_not_not_found() -> None:
+    """L3 (load-bearing): auf dem Name-Server ist ein Typo PV_TIMEOUT, NIE PV_NOT_FOUND.
+
+    Fixiert den §Name-Server-Timeout-Collapse: der Cause darf nie am Error-Code hängen. Ohne Naming
+    (Sandbox) ist der Cause ``indeterminate`` (bzw. ``name_typo``-Kandidat nur MIT Naming).
+    """
+    _reset_epics_singletons()
+    from epics_pv_mcp.services.diagnose import diagnose
+
+    report = await diagnose(_PV_TYPO, timeout=3.0)
+    assert report.state == "disconnected"
+    assert report.evidence.live.error_code == "PV_TIMEOUT", (
+        f"erwartet PV_TIMEOUT auf dem Name-Server, bekam {report.evidence.live.error_code!r} — "
+        "der Name-Server-Timeout-Collapse (Typo == toter IOC == Timeout) ist die tragende Annahme."
+    )
+    assert report.evidence.live.error_code != "PV_NOT_FOUND"
+    assert report.likely_cause in {"indeterminate", "name_typo"}
+
+
+@pytest.mark.skipif(_NO_SANDBOX, reason=_SKIP_REASON)
+async def test_diagnose_l4_wrong_prefix_is_disconnected() -> None:
+    """L4: ein nicht-laufender Prefix (IOC-down-Simulation) → disconnected, nicht healthy."""
+    _reset_epics_singletons()
+    from epics_pv_mcp.services.diagnose import diagnose
+
+    report = await diagnose(_PV_WRONG_PREFIX, timeout=3.0)
+    assert report.state == "disconnected"
+    assert report.likely_cause != "healthy"
+
+
+@pytest.mark.skipif(_NO_SANDBOX, reason=_SKIP_REASON)
+async def test_diagnose_l5_all_planes_off_no_plane_consulted() -> None:
+    """L5: bediente PV, alle Planes AUS → healthy, keine Plane konsultiert, kein Withhold."""
+    _reset_epics_singletons()
+    from epics_pv_mcp.services.diagnose import diagnose
+
+    report = await diagnose(
+        _PV_ANALOG,
+        check_channelfinder=False,
+        check_naming=False,
+        check_archiver=False,
+        check_alarm=False,
+    )
+    assert report.state == "connected"
+    assert report.likely_cause == "healthy"
+    ev = report.evidence
+    assert not any(p.consulted for p in (ev.channelfinder, ev.naming, ev.archiver, ev.alarm))
+    # withheld = REQUESTED-aber-unerreichbar; nichts requested → nichts withheld.
+    assert report.withheld == ()
+
+
+@pytest.mark.skipif(_NO_SANDBOX, reason=_SKIP_REASON)
+async def test_diagnose_l6_cf_disabled_is_indeterminate_anti_overclaim() -> None:
+    """L6 (anti-over-claim): der Gap OHNE CF → indeterminate (kein Directory-Signal)."""
+    _reset_epics_singletons()
+    from epics_pv_mcp.services.diagnose import diagnose
+
+    report = await diagnose(_W2_GAP, timeout=3.0, check_channelfinder=False)
+    assert report.state == "disconnected"
+    assert report.likely_cause == "indeterminate"
