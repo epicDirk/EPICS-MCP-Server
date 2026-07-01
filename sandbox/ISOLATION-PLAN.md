@@ -52,6 +52,25 @@ fresh-measurement-wins, hier dokumentiert statt stillschweigend aufgelöst:
 > Egress-Block ist verfügbar, aber bewusst nicht gebaut. Die §2-„bewiesen"-Tabelle gilt nur für die
 > **127.0.0.1-Zeile**; die `internal:true`-Zeile ist **widerlegt**.
 
+### QA (2026-07-01) — beide Behauptungen adversarial VERIFIZIERT (nicht mehr inferiert)
+
+- **Inbound zu = PASS (adversarial):** alle **10** publizierten Ports binden `127.0.0.1` (0.0.0.0-Binds = 0);
+  über die **Host-LAN-IP `172.18.23.209`** sind CF :8080 + Archiver :17665 **connection-refused (curl exit 7)**,
+  über `127.0.0.1` erreichbar → ein ESS-LAN-Host erreicht KEINEN Sandbox-Port.
+- **Beacon-Scoping wirkt = PASS (Quelle + empirisch):** alle 4 Vars gegen **epics-base R7.0.9** (`rsrv/caservertask.c`
+  L286/L413/L415-427) + **PVXS 1.3.1** (`config.cpp` L425/L429) verifiziert (honoriert, Beacon-Ziel = `{127.0.0.1}`,
+  Broadcast-Block übersprungen); **QSRV2 bestätigt** (`libpvxs`/`softIocPVX.dbd` → `EPICS_PVAS_*` gelten). **Empirisch:**
+  CA-Beacons gehen alle 15s **nur an `127.0.0.1`** (tcpdump im IOC-Netzns auf `lo`), **null** auf der Bridge-Broadcast
+  (positiv-kontrolliert gegen recsync :5049, das der Sniffer sauber fängt).
+- **⚠ INTF-BINDING-FALLE (stehende Guardrail):** **NIEMALS** `EPICS_CAS_INTF_ADDR_LIST` / `EPICS_PVAS_INTF_ADDR_LIST`
+  auf `127.0.0.1` setzen (der Research-Subagent empfahl es — topologie-blind). Das bände den IOC ans **Container**-Loopback
+  → Archiver/Alarm (Bridge-IP) und MCP (publizierter Port → Container-`eth0`) verlören die Verbindung → **Datenpfad kaputt**.
+  Die Erreichbarkeits-Sperre leistet bei uns die **Inbound-Isolation** (Docker-`127.0.0.1`-Publish, oben bewiesen), NICHT
+  INTF-Binding. Der IOC MUSS auf allen Container-Interfaces lauschen, damit die Sandbox-internen Clients ihn erreichen.
+- **Optionale Robustheit (nicht angewandt):** `EPICS_PVA_AUTO_ADDR_LIST=NO` wird von PVXS nur als **Fallback**-Name
+  konsumiert; server-kanonisch wäre `EPICS_PVAS_AUTO_BEACON_ADDR_LIST=NO` (eindeutig, nicht überschattbar). Aktuell
+  nachweislich wirksam → nur ein Klarheits-/Robustheits-Nice-to-have.
+
 ---
 
 ## 1. Befund (warum das nötig ist)
