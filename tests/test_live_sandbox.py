@@ -41,6 +41,17 @@ _SKIP_RECSYNC_REASON = (
     "um den reccaster-Auto-Populate-Test zu fahren"
 )
 
+# Eigenes Gate für die Naming-Cause-Tests (L7-L9): braucht den opt-in mock-naming-Container.
+_NO_NAMING = not os.getenv("EPICS_SANDBOX_NAMING")
+_SKIP_NAMING_REASON = (
+    "EPICS_SANDBOX_NAMING=1 + mock-naming starten "
+    "(docker compose --profile naming up -d mock-naming), "
+    "um die Naming-Cause-Tests (unregistered/name_typo) zu fahren"
+)
+# Naming-URL für die Mock-Tests (Trailing-Slash PFLICHT: der Client concatet
+# base_url + 'rest/deviceNames/').
+_MOCK_NAMING_URL = os.getenv("EPICS_MCP_NAMING_URL", "http://localhost:8099/")
+
 # Beide cf_unregistered-Tests brauchen den angehobenen CF-Cap: gegen das ~576-Kanal-EVR-Prefix
 # withholdet der CF-Checker beim Default 500 (cf_unregistered → []). Ohne diesen Guard erschiene das
 # als kryptische „len 0"-Assertion statt als aktionierbare Skip-Meldung (s. sandbox/README §CF-Cap).
@@ -403,4 +414,63 @@ async def test_diagnose_l6_cf_disabled_is_indeterminate_anti_overclaim() -> None
 
     report = await diagnose(_W2_GAP, timeout=3.0, check_channelfinder=False)
     assert report.state == "disconnected"
+    assert report.likely_cause == "indeterminate"
+
+
+# --- Wedge 4 / Tier 3: der volle Cause-Baum gegen das lokale mock-naming (L7-L9) ---------------
+
+
+@pytest.mark.skipif(_NO_NAMING or _NO_CF, reason=_SKIP_NAMING_REASON)
+async def test_diagnose_l7_gap_with_naming_is_unregistered(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """L7: Gap-PV — Gerät in Naming ACTIVE, PV nicht in CF -> unregistered (statt indeterminate).
+
+    Braucht BEIDE: CF (Gap nicht registriert) UND mock-naming
+    (Gerät FBIS-DLN01:Ctrl-EVR-01 = ACTIVE).
+    """
+    monkeypatch.setenv("EPICS_MCP_NAMING_URL", _MOCK_NAMING_URL)  # setenv -> reset -> diagnose
+    _reset_epics_singletons()
+    from epics_pv_mcp.services.diagnose import diagnose
+
+    report = await diagnose(_W2_GAP, timeout=3.0, check_naming=True)
+    assert report.state == "disconnected"
+    assert report.evidence.naming.consulted is True
+    assert report.evidence.naming.registered is True
+    assert report.likely_cause == "unregistered"
+
+
+@pytest.mark.skipif(_NO_NAMING or _NO_CF, reason=_SKIP_NAMING_REASON)
+async def test_diagnose_l8_wrong_prefix_with_naming_is_name_typo(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """L8: Wrong-Prefix-PV — Gerät WRONG-DLN99:... NICHT in Naming (404) -> name_typo."""
+    monkeypatch.setenv("EPICS_MCP_NAMING_URL", _MOCK_NAMING_URL)
+    _reset_epics_singletons()
+    from epics_pv_mcp.services.diagnose import diagnose
+
+    report = await diagnose(_PV_WRONG_PREFIX, timeout=3.0, check_naming=True)
+    assert report.state == "disconnected"
+    assert report.evidence.naming.consulted is True
+    assert report.evidence.naming.registered is False
+    assert report.likely_cause == "name_typo"
+
+
+@pytest.mark.skipif(_NO_CF, reason=_SKIP_CF_REASON)
+async def test_diagnose_l9_naming_outage_is_withheld_not_typo(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """L9 (Finding B live): Naming unerreichbar -> withheld, NICHT ein selbstsicheres name_typo.
+
+    Dead URL (connection-refused) -> check_connectivity() fängt es -> die naming-Plane wird
+    withheld, der Cause bleibt indeterminate. Mock-unabhängig; nur CF nötig (Gap = CF-miss).
+    """
+    monkeypatch.setenv("EPICS_MCP_NAMING_URL", "http://127.0.0.1:1/")
+    _reset_epics_singletons()
+    from epics_pv_mcp.services.diagnose import diagnose
+
+    report = await diagnose(_W2_GAP, timeout=3.0, check_naming=True)
+    assert report.state == "disconnected"
+    assert "naming" in report.withheld
+    assert report.likely_cause != "name_typo"
     assert report.likely_cause == "indeterminate"

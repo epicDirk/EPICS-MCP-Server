@@ -473,6 +473,31 @@ services:
       - ./alarm:/config:ro
     restart: "no"
 
+  # --- Tier 3: Mock-Naming-Service (Test-Double, opt-in) — diagnose_connection-Cause-Baum live ------
+  # Winziger read-only Mock der ESS-Naming-REST-API (stdlib http.server). Aktiviert die drei
+  # diagnose_connection-Zweige, die die Sandbox ohne lokales Naming nicht live prüfen kann
+  # (unregistered / name_typo / withheld-on-outage). KEIN ESS-Egress, kein Auth, kein Write.
+  # Opt-in via Profil `naming` → ein plain `docker compose up -d` startet ihn NICHT.
+  mock-naming:
+    build:
+      context: ./mock-naming
+    container_name: epics-sandbox-mock-naming
+    profiles: ["naming"]                 # opt-in: ein plain `docker compose up -d` startet ihn NICHT
+    networks: [channelfinder-net]
+    ports:
+      - "127.0.0.1:8099:8099"            # NUR Host-Loopback (Isolations-Invariante §8)
+    environment:
+      MOCK_NAMING_ACTIVE: "FBIS-DLN01:Ctrl-EVR-01"   # ACTIVE-Device; alles andere -> 404 (name_typo)
+      MOCK_NAMING_PORT: "8099"
+    mem_limit: 64m
+    restart: "no"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8099/')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
 volumes:
   cf-es-data:
     driver: local

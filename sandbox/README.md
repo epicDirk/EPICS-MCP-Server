@@ -29,6 +29,7 @@ ESS-Kontakt** (nur der einmalige Image-Build zieht e3-Pakete, s. u.).
 | **`archiver-mariadb`** (**Phase C / C-1 — ESS 2.1.1**) | Config-/PVTypeInfo-DB (`mariadb:10.11`, db/user/pw `archappl`, charset utf8mb3); DDL via `/docker-entrypoint-initdb.d/` | — (container-intern, 3306) |
 | **`archiver-mgmt`** (**Phase C / C-1 — ESS 2.1.1**) | Appliance **mgmt**-Webapp (Hazelcast-Cluster-**Server**, bootet zuletzt) → `is_archived` + Seed `archivePV` | 17665 |
 | **`archiver-engine` / `-etl` / `-retrieval`** (**Phase C / C-1**) | Appliance **engine** (schreibt STS, CA→`test-ioc`) / **etl** (STS→MTS→LTS) / **retrieval** (`get_pv_history`) — Hazelcast-Clients | retrieval **17668** (host); engine/etl container-intern |
+| **`mock-naming`** (**Tier 3 — opt-in, Profil `naming`**) | winziges **read-only Test-Double** der ESS-Naming-REST (`stdlib http.server`); aktiviert den vollen `diagnose_connection`-Cause-Baum (`unregistered`/`name_typo`/`withheld-on-outage`) live. Kein ESS-Egress, kein Auth, kein Write | 8099 |
 
 ### ChannelFinder hochfahren (M1 — Seed-first)
 
@@ -268,6 +269,54 @@ curl -fs "http://localhost:8081/search/alarm/config?config=/Accelerator/*FBIS-DL
 `tests/test_alarm.py`; optionaler Live-Test hinter `EPICS_SANDBOX_ALARM=1`. ⚠ `/search/alarm/config` ist ein
 Config-**Change**-Log — ein Treffer beweist Konfiguration; ein Leertreffer ist nur dann ein echtes „nein",
 wenn der Logger beim Import lief (sonst withheld).
+
+## Tier 3 — Mock-Naming (opt-in — `diagnose_connection`-Cause-Baum live)
+
+Ein winziges **read-only Test-Double** der ESS-Naming-REST-API (`mock-naming/server.py`, `stdlib
+http.server`, ~45 Z.). Es bedient exakt das, was `epics_pv_mcp.services.naming_client` braucht, damit
+`diagnose_connection` seine drei Naming-abhängigen Zweige **live** beweisen kann — ohne lokales Naming
+kollabieren sie sonst alle auf `indeterminate`. **Kein ESS-Egress, kein Auth, kein Write.** Opt-in via
+compose-Profil `naming` → ein plain `docker compose up -d` startet ihn **nicht**.
+
+**Was live prüfbar wird (Cause-Mapping):**
+
+| PV | `_device_name` | Mock | CF | → `likely_cause` |
+|---|---|---|---|---|
+| `…:EVR-01:DlyGen0Prescaler-SP` (die W2-Lücke) | `FBIS-DLN01:Ctrl-EVR-01` | **200 ACTIVE** | miss | **`unregistered`** |
+| `WRONG-DLN99:Ctrl-EVR-01:12VValue` | `WRONG-DLN99:Ctrl-EVR-01` | **404** | miss | **`name_typo`** |
+| die W2-Lücke + Naming an **toter URL** | — | connection-refused | miss | **`indeterminate`, `withheld=[naming]`** |
+
+**Bauen + starten (gegated — Container-Lifecycle, vorher `docker ps` frisch):** Das Profil ist
+**additiv** → nur der Mock entsteht, der laufende Stack bleibt unberührt.
+
+```bash
+docker ps                                                                          # frisch (Multi-Window!)
+docker compose -f sandbox/docker-compose.yml --profile naming up -d --build mock-naming
+# Smoke:
+curl -s   127.0.0.1:8099/rest/deviceNames/FBIS-DLN01:Ctrl-EVR-01                   # → {"status":"ACTIVE",...}
+curl -s -o /dev/null -w "%{http_code}" 127.0.0.1:8099/rest/deviceNames/WRONG-DLN99:Ctrl-EVR-01   # → 404
+curl -sI  127.0.0.1:8099/                                                          # → 200 (HEAD = check_connectivity)
+```
+
+**Naming-Live-Lane (die drei Tests monkeypatchen `EPICS_MCP_NAMING_URL` selbst — nicht ambient setzen):**
+
+```bash
+EPICS_SANDBOX=1 EPICS_SANDBOX_CF=1 EPICS_SANDBOX_NAMING=1 \
+EPICS_MCP_PROVIDER=pva EPICS_PVA_NAME_SERVERS=127.0.0.1:5075 \
+EPICS_PVA_AUTO_ADDR_LIST=NO EPICS_PVA_ADDR_LIST=127.0.0.1 \
+EPICS_MCP_CHANNELFINDER_URL=http://localhost:8080/ChannelFinder \
+uv run pytest -m live -k diagnose
+# → L1-L6 grün + L7 unregistered, L8 name_typo, L9 withheld grün.
+```
+
+> ⚠️ **Trailing-Slash PFLICHT** bei `EPICS_MCP_NAMING_URL=http://localhost:8099/` — der Client concatet
+> `base_url + "rest/deviceNames/"`; ohne den Slash bräche der Pfad. Die Var ist in
+> [`.env.example`](../.env.example) dokumentiert (Default **leer = disabled**, kein ESS-Egress);
+> **`.mcp.json` bleibt unverändert** (Default leer).
+>
+> **Isolation (§8):** Der Server bindet **container-intern `0.0.0.0`** (Bridge-/Publish-erreichbar); die
+> Host-Isolation macht der **`127.0.0.1:8099`-Publish** in compose — kein `0.0.0.0`-Host-Bind, kein
+> `internal:` (dieselbe Lehre wie beim IOC-INTF).
 
 ## Hochfahren
 
